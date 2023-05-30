@@ -1,3 +1,3 @@
 # www.jarvil-lang.org
 
-The home for Jarvil website powered by Next.js
+The home of the Jarvil website powered by Next.js
