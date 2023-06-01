@@ -5,21 +5,8 @@ import {
   useInitProgrammingEnviroment,
   useRunJarvilCode,
 } from "@/hooks/playground";
-import AnsiToHtml from "ansi-to-html";
-
-const AnsiToHtmlConverter = new AnsiToHtml();
-
-const AnsiToHtmlComponent = (prop: { ansiString: string }) => {
-  const htmlRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (htmlRef.current) {
-      htmlRef.current.innerHTML = AnsiToHtmlConverter.toHtml(prop.ansiString);
-    }
-  }, [prop.ansiString]);
-
-  return <div ref={htmlRef} />;
-};
+import styled from "styled-components";
+import { BootstrapCenterWrapper } from "@/components/bootstrap";
 
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
   const handler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -54,6 +41,29 @@ const handleKeyPress = (setInputText: (text: string) => void) => {
   return handler;
 };
 
+const StyledCodeEditorArea = styled.textarea`
+  font-size: 15px;
+  font-family: Consolas;
+  padding: 10px;
+  width: 50%;
+  resize: none;
+`;
+
+const CodeEditorGlobalStyle = styled.div`
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`;
+
+const StyledEditorOuputArea = styled.div`
+  text-align: left;
+  width: 50%;
+  border: red;
+  height: 400px;
+`;
+
 export default function Home() {
   const [inputText, setInputText] = useState<string>(
     'def main():\n    // start writing your code here\n    print("Hello, World")'
@@ -68,27 +78,33 @@ export default function Home() {
   } else {
     return (
       <div>
-        <textarea
-          value={inputText}
-          onChange={handleCodeAreaChange(setInputText)}
-          // onKeyDown={handleKeyPress(setInputText)}
-          rows={30}
-          cols={100}
-        />
-        <div
-          onClick={() => {
-            setIsOutputLoading(true);
-          }}
-        >
-          Run
-        </div>
-        <div style={{ whiteSpace: "pre-wrap" }}>
-          {isOutputLoading ? (
-            <div>"running the code ...\n"</div>
-          ) : (
-            <div>{output}</div>
-          )}
-        </div>
+        <BootstrapCenterWrapper>
+          <div>
+            <CodeEditorGlobalStyle>
+              <StyledCodeEditorArea
+                value={inputText}
+                onChange={handleCodeAreaChange(setInputText)}
+                // onKeyDown={handleKeyPress(setInputText)}
+                rows={20}
+                cols={50}
+              />
+              <div
+                onClick={() => {
+                  setIsOutputLoading(true);
+                }}
+              >
+                Run
+              </div>
+              <StyledEditorOuputArea style={{ whiteSpace: "pre-wrap" }}>
+                {isOutputLoading ? (
+                  <div>"running the code ...\n"</div>
+                ) : (
+                  <div>{output}</div>
+                )}
+              </StyledEditorOuputArea>
+            </CodeEditorGlobalStyle>
+          </div>
+        </BootstrapCenterWrapper>
       </div>
     );
   }
