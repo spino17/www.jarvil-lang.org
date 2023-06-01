@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import init from "../public/pkg/jarvil_wasm";
 import { runJarvilCode } from "@/utils/playground";
+import { loadPyodide } from "../public";
 
-export function useInitWasmModule(): boolean {
-  const [isWasmModuleLoading, setIsWasmModuleLoading] = useState<boolean>(true);
+export function useInitProgrammingEnviroment(): boolean {
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   useEffect(() => {
     const inner_func = async () => {
-      await init();
-      setIsWasmModuleLoading(false);
+      await init(); // load the jarvil-wasm module
+      let pyodide = await loadPyodide();
+      console.log(
+        pyodide.runPython(`
+    print("Hello, World dasjdnsjdjs")
+  `)
+      );
+      setIsInitialized(true);
     };
     inner_func();
   }, []);
 
-  return isWasmModuleLoading;
+  return isInitialized;
 }
 
 export function useRunJarvilCode(inputText: string) {

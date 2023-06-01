@@ -1,7 +1,10 @@
 "use client"; // This is a client component 👈🏽
 
-import { useEffect, useState } from "react";
-import { useInitWasmModule, useRunJarvilCode } from "@/hooks/playground";
+import { useState } from "react";
+import {
+  useInitProgrammingEnviroment,
+  useRunJarvilCode,
+} from "@/hooks/playground";
 
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
   const handler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -12,12 +15,11 @@ const handleCodeAreaChange = (setInputText: (text: string) => void) => {
 
 export default function Home() {
   const [inputText, setInputText] = useState<string>("");
-  const isLoading = useInitWasmModule();
+  const isInitialized = useInitProgrammingEnviroment();
   const { isOutputLoading, setIsOutputLoading, output } =
     useRunJarvilCode(inputText);
-
-  if (isLoading) {
-    return <div>loading ...</div>;
+  if (!isInitialized) {
+    return <div>Initializing programming environment ...</div>;
   } else {
     return (
       <div>

@@ -1,4 +1,3 @@
-import { loadPyodide } from "pyodide";
 import { compile } from "../public/pkg";
 
 function resolveAfter3Seconds() {
