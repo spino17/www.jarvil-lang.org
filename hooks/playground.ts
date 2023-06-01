@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import init from "../public/pkg/jarvil_wasm";
 import { runJarvilCode } from "@/utils/playground";
 
-function useInitWasmModule(): boolean {
+export function useInitWasmModule(): boolean {
   const [isWasmModuleLoading, setIsWasmModuleLoading] = useState<boolean>(true);
   useEffect(() => {
     const inner_func = async () => {
@@ -15,21 +15,15 @@ function useInitWasmModule(): boolean {
   return isWasmModuleLoading;
 }
 
-function useRunJarvilCode(inputText: string) {
-  const [isOutputLoading, setIsOutputLoading] = useState<boolean>(true);
+export function useRunJarvilCode(inputText: string) {
+  const [isOutputLoading, setIsOutputLoading] = useState<boolean>(false);
   const [output, setOutput] = useState<string>("");
   useEffect(() => {
     if (isOutputLoading) {
       const inner_func = async () => {
-        try {
-          const result = await runJarvilCode(inputText);
-          setOutput(result);
-          setIsOutputLoading(false);
-        } catch (error) {
-          const err_msg = error as string;
-          setOutput(err_msg);
-          setIsOutputLoading(false);
-        }
+        const result = await runJarvilCode(inputText);
+        setOutput(result);
+        setIsOutputLoading(false);
       };
       inner_func();
     }

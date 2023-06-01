@@ -1,20 +1,7 @@
 "use client"; // This is a client component 👈🏽
 
 import { useEffect, useState } from "react";
-import init, { compile } from "../public/pkg/jarvil_wasm";
-import { runJarvilCode } from "@/utils/playground";
-
-function resolveAfter3Seconds() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("resolved");
-    }, 3000);
-  });
-}
-
-function handleRun(setIsOutputLoading: (isLoading: boolean) => void) {
-  setIsOutputLoading(true);
-}
+import { useInitWasmModule, useRunJarvilCode } from "@/hooks/playground";
 
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
   const handler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,36 +11,10 @@ const handleCodeAreaChange = (setInputText: (text: string) => void) => {
 };
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isOutputLoading, setIsOutputLoading] = useState<boolean>(false);
-  const [output, setOutput] = useState<string>("");
   const [inputText, setInputText] = useState<string>("");
-  // initialize wasm module as playground first renders
-  useEffect(() => {
-    const inner_func = async () => {
-      await init(); // initialize the wasm module
-      setIsLoading(false);
-    };
-    inner_func();
-  }, []);
-
-  useEffect(() => {
-    if (isOutputLoading) {
-      const inner_func = async () => {
-        try {
-          // await resolveAfter3Seconds();
-          const result = await runJarvilCode(inputText); // initialize the wasm module
-          setOutput(result);
-          setIsOutputLoading(false);
-        } catch (error) {
-          const err_msg = error as string;
-          setOutput(err_msg);
-          setIsOutputLoading(false);
-        }
-      };
-      inner_func();
-    }
-  }, [isOutputLoading]);
+  const isLoading = useInitWasmModule();
+  const { isOutputLoading, setIsOutputLoading, output } =
+    useRunJarvilCode(inputText);
 
   if (isLoading) {
     return <div>loading ...</div>;
@@ -68,7 +29,7 @@ export default function Home() {
         />
         <div
           onClick={() => {
-            handleRun(setIsOutputLoading);
+            setIsOutputLoading(true);
           }}
         >
           Run

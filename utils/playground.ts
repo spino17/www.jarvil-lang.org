@@ -1,3 +1,4 @@
+import { loadPyodide } from "pyodide";
 import { compile } from "../public/pkg";
 
 function resolveAfter3Seconds() {
@@ -10,24 +11,19 @@ function resolveAfter3Seconds() {
 
 export async function runJarvilCode(inputCode: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    try {
-      const result = compile(inputCode);
-      resolveAfter3Seconds()
-        .then(() => {
-          resolve(result);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-      // call `pyodide` async call to run the python code!
-    } catch (error) {
-      if (typeof error == "string") {
-        reject(error);
-      } else {
-        reject(
-          "Something went wrong! Please attach the code and raise an issue on `https://github.com/spino17/jarvil/issues`"
-        );
+    resolveAfter3Seconds().then(() => {
+      try {
+        const result = compile(inputCode);
+        resolve(result);
+      } catch (error) {
+        if (typeof error == "string") {
+          resolve(error);
+        } else {
+          resolve(
+            "Something went wrong! Please attach the code and raise an issue on `https://github.com/spino17/jarvil/issues`"
+          );
+        }
       }
-    }
+    });
   });
 }
