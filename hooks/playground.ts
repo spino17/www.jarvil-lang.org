@@ -8,12 +8,6 @@ export function useInitProgrammingEnviroment(): boolean {
   useEffect(() => {
     const inner_func = async () => {
       await init(); // load the jarvil-wasm module
-      let pyodide = await loadPyodide();
-      console.log(
-        pyodide.runPython(`
-    print("Hello, World dasjdnsjdjs")
-  `)
-      );
       setIsInitialized(true);
     };
     inner_func();

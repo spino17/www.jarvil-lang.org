@@ -36,7 +36,9 @@ export default function Home() {
         >
           Run
         </div>
-        {isOutputLoading ? "running the code ...\n" : output}
+        <div style={{ whiteSpace: "pre-wrap" }}>
+          {isOutputLoading ? "running the code ...\n" : output}
+        </div>
       </div>
     );
   }
