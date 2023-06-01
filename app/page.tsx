@@ -8,6 +8,7 @@ import {
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
 
+// event-handlers
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
   const handler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
@@ -73,39 +74,37 @@ export default function Home() {
     inputText,
     pyodide
   );
-  if (!isInitialized) {
-    return <div>Initializing programming environment ...</div>;
-  } else {
-    return (
-      <div>
-        <BootstrapCenterWrapper>
-          <div>
-            <CodeEditorGlobalStyle>
-              <StyledCodeEditorArea
-                value={inputText}
-                onChange={handleCodeAreaChange(setInputText)}
-                // onKeyDown={handleKeyPress(setInputText)}
-                rows={20}
-                cols={50}
-              />
-              <div
-                onClick={() => {
-                  setIsOutputLoading(true);
-                }}
-              >
-                Run
-              </div>
-              <StyledEditorOuputArea style={{ whiteSpace: "pre-wrap" }}>
-                {isOutputLoading ? (
-                  <div>"running the code ...\n"</div>
-                ) : (
-                  <div>{output}</div>
-                )}
-              </StyledEditorOuputArea>
-            </CodeEditorGlobalStyle>
+  return (
+    <BootstrapCenterWrapper>
+      {!isInitialized ? (
+        <CodeEditorGlobalStyle>
+          Initializing programming environment ...
+        </CodeEditorGlobalStyle>
+      ) : (
+        <CodeEditorGlobalStyle>
+          <StyledCodeEditorArea
+            value={inputText}
+            onChange={handleCodeAreaChange(setInputText)}
+            // onKeyDown={handleKeyPress(setInputText)}
+            rows={20}
+            cols={50}
+          />
+          <div
+            onClick={() => {
+              setIsOutputLoading(true);
+            }}
+          >
+            Run
           </div>
-        </BootstrapCenterWrapper>
-      </div>
-    );
-  }
+          <StyledEditorOuputArea style={{ whiteSpace: "pre-wrap" }}>
+            {isOutputLoading ? (
+              <div>"running the code ...\n"</div>
+            ) : (
+              <div>{output}</div>
+            )}
+          </StyledEditorOuputArea>
+        </CodeEditorGlobalStyle>
+      )}
+    </BootstrapCenterWrapper>
+  );
 }
