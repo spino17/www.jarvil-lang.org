@@ -15,9 +15,11 @@ const handleCodeAreaChange = (setInputText: (text: string) => void) => {
 
 export default function Home() {
   const [inputText, setInputText] = useState<string>("");
-  const isInitialized = useInitProgrammingEnviroment();
-  const { isOutputLoading, setIsOutputLoading, output } =
-    useRunJarvilCode(inputText);
+  const { isInitialized, pyodide } = useInitProgrammingEnviroment();
+  const { isOutputLoading, setIsOutputLoading, output } = useRunJarvilCode(
+    inputText,
+    pyodide
+  );
   if (!isInitialized) {
     return <div>Initializing programming environment ...</div>;
   } else {

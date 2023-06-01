@@ -1,20 +1,13 @@
 import { loadPyodide } from "@/public";
 import { compile } from "../public/pkg";
 
-function resolveAfter3Seconds() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("resolved");
-    }, 3000);
-  });
-}
-
 function getPythonCodeTemplate(code: string): string {
+  // This template wraps the code in order to redirect stdout for displaying it
+  // on UI instead of console (which is default behaviour of `Pyodide`).
   var code = JSON.stringify(code);
   let pyCodeTemplate =
     `
 import sys, io, traceback
-namespace = {}  # use separate namespace to hide run_code, modules, etc.
 def run_code(code):
   """run specified code and return stdout and stderr"""
   out = io.StringIO()
@@ -35,22 +28,46 @@ run_code(` +
   return pyCodeTemplate;
 }
 
-export async function runJarvilCode(inputCode: string): Promise<string> {
+export async function runJarvilCode(
+  inputCode: string,
+  pyodide: any
+): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     try {
-      const result = compile(inputCode);
+      const pyCode = compile(inputCode);
+      pyodide
+        .runPythonAsync(
+          getPythonCodeTemplate(
+            `def main():\n    print("HELLO WORLssasD")\n    print("yo man")\n\nmain()`
+          )
+        )
+        .then((result: string) => {
+          // `stdout`
+          resolve(result);
+        })
+        .catch((error: Error) => {
+          // Python runtime error
+          resolve(error.message);
+        });
+      /*
       loadPyodide().then((pyodide) => {
         pyodide
-          .runPythonAsync(getPythonCodeTemplate(`print("Hello World")`))
+          .runPythonAsync(
+            getPythonCodeTemplate(
+              `def main():\n    print("HELLO WORLD")\n    print("yo man")\n\nmain()`
+            )
+          )
           .then((result: string) => {
+            // `stdout`
             resolve(result);
           })
           .catch((error: Error) => {
             // Python runtime error
             resolve(error.message);
           });
-      });
+      });*/
     } catch (error) {
+      // Jarvil static type-checking error
       if (typeof error == "string") {
         resolve(error);
       } else {
