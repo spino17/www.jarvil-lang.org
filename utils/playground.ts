@@ -46,7 +46,8 @@ export async function runJarvilCode(
           resolve(error.message);
         });
     } catch (error) {
-      // console.log(error);
+      console.log(JSON.stringify(error));
+      console.log(error);
       // Jarvil static type-checking error
       if (typeof error == "string") {
         resolve(error);
