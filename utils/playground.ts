@@ -36,11 +36,7 @@ export async function runJarvilCode(
     try {
       const pyCode = compile(inputCode);
       pyodide
-        .runPythonAsync(
-          getPythonCodeTemplate(
-            `def main():\n    print("HELLO WORLssasD")\n    print("yo man")\n\nmain()`
-          )
-        )
+        .runPythonAsync(getPythonCodeTemplate(pyCode))
         .then((result: string) => {
           // `stdout`
           resolve(result);
@@ -49,24 +45,8 @@ export async function runJarvilCode(
           // Python runtime error
           resolve(error.message);
         });
-      /*
-      loadPyodide().then((pyodide) => {
-        pyodide
-          .runPythonAsync(
-            getPythonCodeTemplate(
-              `def main():\n    print("HELLO WORLD")\n    print("yo man")\n\nmain()`
-            )
-          )
-          .then((result: string) => {
-            // `stdout`
-            resolve(result);
-          })
-          .catch((error: Error) => {
-            // Python runtime error
-            resolve(error.message);
-          });
-      });*/
     } catch (error) {
+      // console.log(error);
       // Jarvil static type-checking error
       if (typeof error == "string") {
         resolve(error);

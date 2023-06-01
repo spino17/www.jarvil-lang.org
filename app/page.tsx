@@ -7,7 +7,7 @@ import {
 } from "@/hooks/playground";
 
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
-  const handler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
   };
   return handler;
@@ -25,11 +25,11 @@ export default function Home() {
   } else {
     return (
       <div>
-        <input
-          type="text"
+        <textarea
           value={inputText}
           onChange={handleCodeAreaChange(setInputText)}
-          style={{ border: "1px solid #ccc", padding: "10px", width: "500px" }}
+          rows={30}
+          cols={100}
         />
         <div
           onClick={() => {
