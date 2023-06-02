@@ -1,12 +1,13 @@
 "use client"; // This is a client component 👈🏽
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import {
   useInitProgrammingEnviroment,
   useRunJarvilCode,
 } from "@/hooks/playground";
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
+import { ThemeContext, consolasFont } from "./layout";
 
 // event-handlers
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
@@ -44,10 +45,14 @@ const handleKeyPress = (setInputText: (text: string) => void) => {
 
 const StyledCodeEditorArea = styled.textarea`
   font-size: 15px;
-  font-family: Consolas;
   padding: 10px;
   width: 50%;
   resize: none;
+  background-color: #0a0a0a;
+  color: white;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const CodeEditorGlobalStyle = styled.div`
@@ -56,13 +61,19 @@ const CodeEditorGlobalStyle = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  color: ${(props) => props.theme.defaultFontColor};
 `;
 
 const StyledEditorOuputArea = styled.div`
   text-align: left;
   width: 50%;
   border: red;
-  height: 400px;
+  height: 200px;
+  background-color: yellow;
+  padding: 10px;
+  color: ${(props) => props.theme.secondaryFontColor};
 `;
 
 export default function Home() {
@@ -74,20 +85,23 @@ export default function Home() {
     inputText,
     pyodide
   );
+  const { theme } = useContext(ThemeContext);
   return (
     <BootstrapCenterWrapper>
       {!isInitialized ? (
-        <CodeEditorGlobalStyle>
+        <CodeEditorGlobalStyle theme={theme}>
           Initializing programming environment ...
         </CodeEditorGlobalStyle>
       ) : (
-        <CodeEditorGlobalStyle>
+        <CodeEditorGlobalStyle theme={theme}>
           <StyledCodeEditorArea
             value={inputText}
             onChange={handleCodeAreaChange(setInputText)}
             // onKeyDown={handleKeyPress(setInputText)}
             rows={20}
             cols={50}
+            className={consolasFont.className}
+            theme={theme}
           />
           <div
             onClick={() => {
@@ -96,7 +110,10 @@ export default function Home() {
           >
             Run
           </div>
-          <StyledEditorOuputArea style={{ whiteSpace: "pre-wrap" }}>
+          <StyledEditorOuputArea
+            style={{ whiteSpace: "pre-wrap" }}
+            theme={theme}
+          >
             {isOutputLoading ? (
               <div>"running the code ...\n"</div>
             ) : (
