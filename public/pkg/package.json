@@ -1,0 +1,17 @@
+{
+  "name": "jarvil-wasm",
+  "collaborators": [
+    "Bhavya Bhatt bhavyabhatt17@gmail.com"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "jarvil_wasm_bg.wasm",
+    "jarvil_wasm.js",
+    "jarvil_wasm.d.ts"
+  ],
+  "module": "jarvil_wasm.js",
+  "types": "jarvil_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

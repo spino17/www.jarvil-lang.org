@@ -7,7 +7,17 @@ import {
 } from "@/hooks/playground";
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
-import { ThemeContext, consolasFont } from "./layout";
+import Editor from "react-simple-code-editor";
+import "prismjs/themes/prism.css"; //Example style, you can use another
+import Prism from "prismjs";
+import localFont from "next/font/local";
+import { LocalThemeContext } from "@/components/theme";
+
+const consolasFont = localFont({
+  src: "../public/Consolas.ttf",
+  display: "swap",
+  weight: "300",
+});
 
 // event-handlers
 const handleCodeAreaChange = (setInputText: (text: string) => void) => {
@@ -85,42 +95,56 @@ export default function Home() {
     inputText,
     pyodide
   );
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useContext(LocalThemeContext);
   return (
-    <BootstrapCenterWrapper>
+    <BootstrapCenterWrapper theme={theme}>
       {!isInitialized ? (
         <CodeEditorGlobalStyle theme={theme}>
-          Initializing programming environment ...
+          {"Initializing programming environment ..."}
         </CodeEditorGlobalStyle>
       ) : (
-        <CodeEditorGlobalStyle theme={theme}>
-          <StyledCodeEditorArea
-            value={inputText}
-            onChange={handleCodeAreaChange(setInputText)}
-            // onKeyDown={handleKeyPress(setInputText)}
-            rows={20}
-            cols={50}
-            className={consolasFont.className}
-            theme={theme}
-          />
-          <div
-            onClick={() => {
-              setIsOutputLoading(true);
-            }}
-          >
-            Run
-          </div>
-          <StyledEditorOuputArea
-            style={{ whiteSpace: "pre-wrap" }}
-            theme={theme}
-          >
-            {isOutputLoading ? (
-              <div>"running the code ...\n"</div>
-            ) : (
-              <div>{output}</div>
-            )}
-          </StyledEditorOuputArea>
-        </CodeEditorGlobalStyle>
+        <div>
+          <CodeEditorGlobalStyle theme={theme}>
+            <Editor
+              value={inputText}
+              onValueChange={(code) => setInputText(code)}
+              highlight={(code) =>
+                Prism.highlight(code, Prism.languages.javascript, "js")
+              }
+              padding={10}
+              style={{
+                fontFamily: '"Consolas"',
+                fontSize: 12,
+              }}
+            />
+            <StyledCodeEditorArea
+              value={inputText}
+              onChange={handleCodeAreaChange(setInputText)}
+              // onKeyDown={handleKeyPress(setInputText)}
+              rows={20}
+              cols={50}
+              className={consolasFont.className}
+              theme={theme}
+            />
+            <div
+              onClick={() => {
+                setIsOutputLoading(true);
+              }}
+            >
+              Run
+            </div>
+            <StyledEditorOuputArea
+              style={{ whiteSpace: "pre-wrap" }}
+              theme={theme}
+            >
+              {isOutputLoading ? (
+                <div>{"running the code ...\n"}</div>
+              ) : (
+                <div>{output}</div>
+              )}
+            </StyledEditorOuputArea>
+          </CodeEditorGlobalStyle>
+        </div>
       )}
     </BootstrapCenterWrapper>
   );

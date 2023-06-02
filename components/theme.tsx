@@ -1,6 +1,16 @@
-import { Theme } from "@/utils/theme";
-import { useState } from "react";
+"use client";
+
+import { Theme, themeData } from "@/utils/theme";
+import React, { useState } from "react";
 import { ThemeContext } from "styled-components";
+
+type ThemeContextType = {
+  theme: Theme;
+};
+
+export const LocalThemeContext = React.createContext<ThemeContextType>({
+  theme: themeData,
+});
 
 type ThemeProviderProps = {
   theme: Theme;
