@@ -55,17 +55,7 @@ const handleKeyPress = (setInputText: (text: string) => void) => {
   return handler;
 };
 
-const EditorWrapper = styled.div`
-  overflow-y: auto;
-  height: 500px;
-  width: 70%;
-  margin: 20px;
-  &:focus {
-    outline: none;
-  }
-`;
-
-const CodeEditorGlobalStyle = styled.div`
+const CodeEditorGlobalWrapper = styled.div`
   text-align: center;
   display: flex;
   align-items: center;
@@ -76,16 +66,27 @@ const CodeEditorGlobalStyle = styled.div`
   color: ${(props) => props.theme.defaultFontColor};
 `;
 
+const EditorWrapper = styled.div`
+  overflow: auto;
+  height: 600px;
+  width: 70%;
+  margin-left: 20px;
+  &:focus {
+    outline: none;
+  }
+`;
+
 const StyledEditorOuputArea = styled.div`
   text-align: left;
   border: red;
-  width: 25%;
-  height: 100vh;
-  background-color: #121d2e;
+  width: 30%;
+  height: 600px;
+  background-color: #252626;
   padding: 10px;
   color: ${(props) => props.theme.defaultFontColor};
-  overflow-x: auto;
-  margin: 20px;
+  overflow: auto;
+  border-left: 1px solid #000;
+  margin-right: 20px;
 `;
 
 const FlexDisplay = styled.div`
@@ -94,12 +95,19 @@ const FlexDisplay = styled.div`
 `;
 
 const StyledRunButton = styled.div`
-  color: green;
+  color: #228b22;
+  font-weight: 400;
   &:hover {
     cursor: pointer;
+    background-color: #1f1f1f;
   }
-  width: 10px;
-  height: 10px;
+  width: 50px;
+  height: 40px;
+  padding: 10px;
+`;
+
+const ConfigBarGlobalWrapper = styled.div`
+  background-color: #121212;
 `;
 
 export default function Home() {
@@ -120,14 +128,23 @@ export default function Home() {
   return (
     <BootstrapCenterWrapper theme={theme}>
       {!isInitialized ? (
-        <CodeEditorGlobalStyle theme={theme}>
+        <CodeEditorGlobalWrapper theme={theme}>
           {"Initializing programming environment ..."}
-        </CodeEditorGlobalStyle>
+        </CodeEditorGlobalWrapper>
       ) : (
         <div>
-          <CodeEditorGlobalStyle theme={theme}>
+          <CodeEditorGlobalWrapper theme={theme}>
             <FlexDisplay>
               <EditorWrapper>
+                <ConfigBarGlobalWrapper>
+                  <StyledRunButton
+                    onClick={() => {
+                      setIsOutputLoading(true);
+                    }}
+                  >
+                    Run
+                  </StyledRunButton>
+                </ConfigBarGlobalWrapper>
                 <Editor
                   value={inputText}
                   onValueChange={(code) => setInputText(code)}
@@ -143,13 +160,6 @@ export default function Home() {
                   tabSize={4}
                 />
               </EditorWrapper>
-              <StyledRunButton
-                onClick={() => {
-                  setIsOutputLoading(true);
-                }}
-              >
-                Run
-              </StyledRunButton>
               <StyledEditorOuputArea
                 style={{ whiteSpace: "pre-wrap" }}
                 theme={theme}
@@ -161,7 +171,7 @@ export default function Home() {
                 )}
               </StyledEditorOuputArea>
             </FlexDisplay>
-          </CodeEditorGlobalStyle>
+          </CodeEditorGlobalWrapper>
         </div>
       )}
     </BootstrapCenterWrapper>
