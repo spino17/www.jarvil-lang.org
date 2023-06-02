@@ -13,6 +13,10 @@ import Prism from "prismjs";
 import localFont from "next/font/local";
 import { LocalThemeContext } from "@/components/theme";
 import "./globals.css";
+import hljs from "highlight.js/lib/core";
+import python from "highlight.js/lib/languages/python"; // Import the language module
+// import "highlight.js/styles/github.css";
+import "highlight.js/styles/atom-one-dark.css";
 
 const consolasFont = localFont({
   src: "../public/Consolas.ttf",
@@ -54,6 +58,12 @@ const handleKeyPress = (setInputText: (text: string) => void) => {
   return handler;
 };
 
+const EditorWrapper = styled.div`
+  overflow-y: auto;
+  height: 300px;
+  width: 50%;
+`;
+
 const CodeEditorGlobalStyle = styled.div`
   text-align: center;
   display: flex;
@@ -88,8 +98,9 @@ export default function Home() {
   const { theme } = useContext(LocalThemeContext);
   const additionalClass = "editor";
   const inheritClass = consolasFont.className;
-
   const combinedClasses = `${inheritClass} ${additionalClass}`;
+  hljs.registerLanguage("python", python);
+
   return (
     <BootstrapCenterWrapper theme={theme}>
       {!isInitialized ? (
@@ -99,17 +110,22 @@ export default function Home() {
       ) : (
         <div>
           <CodeEditorGlobalStyle theme={theme}>
-            <Editor
-              value={inputText}
-              onValueChange={(code) => setInputText(code)}
-              highlight={(code) =>
-                Prism.highlight(code, Prism.languages.javascript, "js")
-              }
-              padding={10}
-              className={combinedClasses}
-              insertSpaces={true}
-              tabSize={4}
-            />
+            <EditorWrapper>
+              <Editor
+                value={inputText}
+                onValueChange={(code) => setInputText(code)}
+                highlight={(code) => {
+                  return hljs.highlight(code, {
+                    language: "python",
+                    ignoreIllegals: true,
+                  }).value;
+                }}
+                padding={10}
+                className={combinedClasses}
+                insertSpaces={true}
+                tabSize={4}
+              />
+            </EditorWrapper>
             <div
               onClick={() => {
                 setIsOutputLoading(true);
