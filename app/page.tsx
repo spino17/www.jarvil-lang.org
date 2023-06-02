@@ -8,10 +8,11 @@ import {
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
 import Editor from "react-simple-code-editor";
-import "prismjs/themes/prism.css"; //Example style, you can use another
+import "prismjs/themes/prism.css";
 import Prism from "prismjs";
 import localFont from "next/font/local";
 import { LocalThemeContext } from "@/components/theme";
+import "./globals.css";
 
 const consolasFont = localFont({
   src: "../public/Consolas.ttf",
@@ -53,18 +54,6 @@ const handleKeyPress = (setInputText: (text: string) => void) => {
   return handler;
 };
 
-const StyledCodeEditorArea = styled.textarea`
-  font-size: 15px;
-  padding: 10px;
-  width: 50%;
-  resize: none;
-  background-color: #0a0a0a;
-  color: white;
-  &:focus {
-    outline: none;
-  }
-`;
-
 const CodeEditorGlobalStyle = styled.div`
   text-align: center;
   display: flex;
@@ -78,12 +67,13 @@ const CodeEditorGlobalStyle = styled.div`
 
 const StyledEditorOuputArea = styled.div`
   text-align: left;
-  width: 50%;
+  width: 48.5%;
   border: red;
   height: 200px;
   background-color: yellow;
   padding: 10px;
   color: ${(props) => props.theme.secondaryFontColor};
+  overflow: auto;
 `;
 
 export default function Home() {
@@ -96,6 +86,10 @@ export default function Home() {
     pyodide
   );
   const { theme } = useContext(LocalThemeContext);
+  const additionalClass = "editor";
+  const inheritClass = consolasFont.className;
+
+  const combinedClasses = `${inheritClass} ${additionalClass}`;
   return (
     <BootstrapCenterWrapper theme={theme}>
       {!isInitialized ? (
@@ -112,19 +106,9 @@ export default function Home() {
                 Prism.highlight(code, Prism.languages.javascript, "js")
               }
               padding={10}
-              style={{
-                fontFamily: '"Consolas"',
-                fontSize: 12,
-              }}
-            />
-            <StyledCodeEditorArea
-              value={inputText}
-              onChange={handleCodeAreaChange(setInputText)}
-              // onKeyDown={handleKeyPress(setInputText)}
-              rows={20}
-              cols={50}
-              className={consolasFont.className}
-              theme={theme}
+              className={combinedClasses}
+              insertSpaces={true}
+              tabSize={4}
             />
             <div
               onClick={() => {
