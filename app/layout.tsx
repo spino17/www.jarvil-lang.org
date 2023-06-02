@@ -1,25 +1,8 @@
-"use client";
-
+import { ThemeProvider } from "@/components/theme";
 import StyledComponentsRegistry from "../lib/registry";
-import localFont from "next/font/local";
 import "./globals.css";
 import React from "react";
-import { Theme, themeData } from "@/utils/theme";
-import { ThemeProvider } from "@/components/theme";
-
-export const consolasFont = localFont({
-  src: "../public/Consolas.ttf",
-  display: "swap",
-  weight: "300",
-});
-
-type ThemeContextType = {
-  theme: Theme;
-};
-
-export const ThemeContext = React.createContext<ThemeContextType>({
-  theme: themeData,
-});
+import { themeData } from "@/utils/theme";
 
 export default function RootLayout({
   children,

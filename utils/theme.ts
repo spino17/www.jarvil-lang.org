@@ -6,7 +6,7 @@ export type Theme = {
 };
 
 export const themeData: Theme = {
-  backgroundColor: "#000",
+  backgroundColor: "#161717",
   primaryFontColor: "",
   secondaryFontColor: "black",
   defaultFontColor: "white",
