@@ -1,4 +1,3 @@
-import { loadPyodide } from "@/public";
 import { compile } from "../public/pkg";
 
 function getPythonCodeTemplate(code: string): string {

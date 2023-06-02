@@ -8,14 +8,11 @@ import {
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
 import Editor from "react-simple-code-editor";
-import "prismjs/themes/prism.css";
-import Prism from "prismjs";
 import localFont from "next/font/local";
 import { LocalThemeContext } from "@/components/theme";
 import "./globals.css";
 import hljs from "highlight.js/lib/core";
-import python from "highlight.js/lib/languages/python"; // Import the language module
-// import "highlight.js/styles/github.css";
+import python from "highlight.js/lib/languages/python"; // Import the language modulez
 import "highlight.js/styles/atom-one-dark.css";
 
 const consolasFont = localFont({
@@ -60,8 +57,12 @@ const handleKeyPress = (setInputText: (text: string) => void) => {
 
 const EditorWrapper = styled.div`
   overflow-y: auto;
-  height: 300px;
-  width: 50%;
+  height: 500px;
+  width: 70%;
+  margin: 20px;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const CodeEditorGlobalStyle = styled.div`
@@ -77,13 +78,28 @@ const CodeEditorGlobalStyle = styled.div`
 
 const StyledEditorOuputArea = styled.div`
   text-align: left;
-  width: 48.5%;
   border: red;
-  height: 200px;
-  background-color: yellow;
+  width: 25%;
+  height: 100vh;
+  background-color: #121d2e;
   padding: 10px;
-  color: ${(props) => props.theme.secondaryFontColor};
-  overflow: auto;
+  color: ${(props) => props.theme.defaultFontColor};
+  overflow-x: auto;
+  margin: 20px;
+`;
+
+const FlexDisplay = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+const StyledRunButton = styled.div`
+  color: green;
+  &:hover {
+    cursor: pointer;
+  }
+  width: 10px;
+  height: 10px;
 `;
 
 export default function Home() {
@@ -110,39 +126,41 @@ export default function Home() {
       ) : (
         <div>
           <CodeEditorGlobalStyle theme={theme}>
-            <EditorWrapper>
-              <Editor
-                value={inputText}
-                onValueChange={(code) => setInputText(code)}
-                highlight={(code) => {
-                  return hljs.highlight(code, {
-                    language: "python",
-                    ignoreIllegals: true,
-                  }).value;
+            <FlexDisplay>
+              <EditorWrapper>
+                <Editor
+                  value={inputText}
+                  onValueChange={(code) => setInputText(code)}
+                  highlight={(code) => {
+                    return hljs.highlight(code, {
+                      language: "python",
+                      ignoreIllegals: true,
+                    }).value;
+                  }}
+                  padding={10}
+                  className={combinedClasses}
+                  insertSpaces={true}
+                  tabSize={4}
+                />
+              </EditorWrapper>
+              <StyledRunButton
+                onClick={() => {
+                  setIsOutputLoading(true);
                 }}
-                padding={10}
-                className={combinedClasses}
-                insertSpaces={true}
-                tabSize={4}
-              />
-            </EditorWrapper>
-            <div
-              onClick={() => {
-                setIsOutputLoading(true);
-              }}
-            >
-              Run
-            </div>
-            <StyledEditorOuputArea
-              style={{ whiteSpace: "pre-wrap" }}
-              theme={theme}
-            >
-              {isOutputLoading ? (
-                <div>{"running the code ...\n"}</div>
-              ) : (
-                <div>{output}</div>
-              )}
-            </StyledEditorOuputArea>
+              >
+                Run
+              </StyledRunButton>
+              <StyledEditorOuputArea
+                style={{ whiteSpace: "pre-wrap" }}
+                theme={theme}
+              >
+                {isOutputLoading ? (
+                  <div>{"running the code ...\n"}</div>
+                ) : (
+                  <div>{output}</div>
+                )}
+              </StyledEditorOuputArea>
+            </FlexDisplay>
           </CodeEditorGlobalStyle>
         </div>
       )}

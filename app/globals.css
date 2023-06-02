@@ -12,10 +12,10 @@ body {
   font-size: 15px;
   padding: 10px;
   resize: none;
-  min-height: 300px;
+  min-height: 500px;
   background-color: #0a0a0a;
 }
 
-.myTextarea:focus {
+.editor:focus {
   outline: none;
 }

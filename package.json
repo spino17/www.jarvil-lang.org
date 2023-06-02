@@ -27,6 +27,8 @@
     "react-bootstrap": "^2.7.4",
     "react-dom": "18.2.0",
     "react-simple-code-editor": "^0.13.1",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.4",
     "styled-components": "^5.3.11",
     "typescript": "5.0.4",
     "utf-8-validate": "^6.0.3"
