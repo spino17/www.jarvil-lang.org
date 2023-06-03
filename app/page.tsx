@@ -103,7 +103,7 @@ const CodeOutputAreaGlobalWrapper = styled.div`
 
 export default function Home() {
   const [inputText, setInputText] = useState<string>(
-    'def main():\n    // start writing your code here\n    print("Hello, World")'
+    'def main():\n    # start writing your code here\n    print("Hello, World")'
   );
   const { isInitialized, pyodide } = useInitProgrammingEnviroment();
   const { isOutputLoading, setIsOutputLoading, output } = useRunJarvilCode(
