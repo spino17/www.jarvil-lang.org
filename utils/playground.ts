@@ -1,4 +1,5 @@
 import { compile } from "../public/pkg";
+import Convert from "ansi-to-html";
 
 export interface JarvilCodeExecutionResult {
   msg: string;
@@ -59,7 +60,10 @@ export async function runJarvilCode(
       // Jarvil static type-checking error
       if (typeof error == "string") {
         console.log(error);
+        var convert = new Convert();
+        console.log(convert.toHtml(error));
         var formattedError = error.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        formattedError = convert.toHtml(formattedError);
         resolve({
           msg: formattedError,
           kind: "jarvil_static_type_check_error",

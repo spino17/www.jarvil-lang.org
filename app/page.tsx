@@ -180,8 +180,9 @@ export default function Home() {
                     // TODO - use output.kind to add extra information on the output
                     <div
                       dangerouslySetInnerHTML={{
-                        __html: RenderOutputWrapper(output.msg),
+                        __html: output.msg,
                       }}
+                      className="output"
                     />
                   ) : null}
                 </CodeOuputAreaWrapper>
