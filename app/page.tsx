@@ -14,46 +14,16 @@ import "./globals.css";
 import hljs from "highlight.js/lib/core";
 import python from "highlight.js/lib/languages/python"; // Import the language modulez
 import "highlight.js/styles/atom-one-dark.css";
+import CodeMirror from "@uiw/react-codemirror";
+import { python as py } from "@codemirror/lang-python";
+import { oneDark } from "@codemirror/theme-one-dark";
+import Prism from "prismjs";
 
 const consolasFont = localFont({
   src: "../public/Consolas.ttf",
   display: "swap",
   weight: "300",
 });
-
-// event-handlers
-const handleCodeAreaChange = (setInputText: (text: string) => void) => {
-  const handler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputText(event.target.value);
-  };
-  return handler;
-};
-
-const handleKeyPress = (setInputText: (text: string) => void) => {
-  // TODO - add logic for auto-indentation
-  const handler = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default behavior of the Enter key
-
-      const textarea = event.target as HTMLTextAreaElement;
-      const { selectionStart, selectionEnd } = textarea;
-      const currentText = textarea.value;
-
-      // Insert indentation before the current cursor position
-      const indentedText =
-        currentText.slice(0, selectionStart) +
-        "\n    " +
-        currentText.slice(selectionStart);
-      setInputText(indentedText);
-
-      // Move the cursor to the correct position after indentation
-      const updatedCursorPos = selectionStart + 2;
-      textarea.setSelectionRange(updatedCursorPos, updatedCursorPos);
-    }
-  };
-
-  return handler;
-};
 
 const CodeEditorGlobalWrapper = styled.div`
   text-align: center;
@@ -64,23 +34,23 @@ const CodeEditorGlobalWrapper = styled.div`
   padding-top: 30px;
   padding-bottom: 30px;
   color: ${(props) => props.theme.defaultFontColor};
+  overflow: auto;
 `;
 
-const EditorWrapper = styled.div`
+const CodeAreaWrapper = styled.div`
   overflow: auto;
   height: 600px;
-  width: 70%;
-  margin-left: 20px;
   &:focus {
     outline: none;
   }
+  text-align: left;
 `;
 
-const StyledEditorOuputArea = styled.div`
+const CodeOuputAreaWrapper = styled.div`
   text-align: left;
   border: red;
   width: 30%;
-  height: 600px;
+  height: 640px;
   background-color: #252626;
   padding: 10px;
   color: ${(props) => props.theme.defaultFontColor};
@@ -106,8 +76,13 @@ const StyledRunButton = styled.div`
   padding: 10px;
 `;
 
-const ConfigBarGlobalWrapper = styled.div`
+const EditorConfigBarWrapper = styled.div`
   background-color: #121212;
+`;
+
+const CodeEditorAreaGlobalWrapper = styled.div`
+  width: 70%;
+  margin-left: 20px;
 `;
 
 export default function Home() {
@@ -135,8 +110,8 @@ export default function Home() {
         <div>
           <CodeEditorGlobalWrapper theme={theme}>
             <FlexDisplay>
-              <EditorWrapper>
-                <ConfigBarGlobalWrapper>
+              <CodeEditorAreaGlobalWrapper>
+                <EditorConfigBarWrapper>
                   <StyledRunButton
                     onClick={() => {
                       setIsOutputLoading(true);
@@ -144,23 +119,35 @@ export default function Home() {
                   >
                     Run
                   </StyledRunButton>
-                </ConfigBarGlobalWrapper>
-                <Editor
-                  value={inputText}
-                  onValueChange={(code) => setInputText(code)}
-                  highlight={(code) => {
-                    return hljs.highlight(code, {
-                      language: "python",
-                      ignoreIllegals: true,
-                    }).value;
-                  }}
-                  padding={10}
-                  className={combinedClasses}
-                  insertSpaces={true}
-                  tabSize={4}
-                />
-              </EditorWrapper>
-              <StyledEditorOuputArea
+                </EditorConfigBarWrapper>
+                <CodeAreaWrapper>
+                  <Editor
+                    value={inputText}
+                    onValueChange={(code) => setInputText(code)}
+                    highlight={(code) => {
+                      return hljs
+                        .highlight(code, {
+                          language: "python",
+                          ignoreIllegals: true,
+                        })
+                        .value.split("\n")
+                        .map(
+                          (line, i) =>
+                            `<span class='editorLineNumber'>${
+                              i + 1
+                            }</span>${line}`
+                        )
+                        .join("\n");
+                    }}
+                    padding={50}
+                    textareaId="codeArea"
+                    className={combinedClasses}
+                    insertSpaces={true}
+                    tabSize={4}
+                  />
+                </CodeAreaWrapper>
+              </CodeEditorAreaGlobalWrapper>
+              <CodeOuputAreaWrapper
                 style={{ whiteSpace: "pre-wrap" }}
                 theme={theme}
               >
@@ -169,7 +156,7 @@ export default function Home() {
                 ) : (
                   <div>{output}</div>
                 )}
-              </StyledEditorOuputArea>
+              </CodeOuputAreaWrapper>
             </FlexDisplay>
           </CodeEditorGlobalWrapper>
         </div>
