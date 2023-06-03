@@ -101,6 +101,19 @@ const CodeOutputAreaGlobalWrapper = styled.div`
   margin-right: 20px;
 `;
 
+function highlightCodeWithLineNumbers(code: string): React.ReactNode {
+  let x = hljs
+    .highlight(code, {
+      language: "python",
+      ignoreIllegals: true,
+    })
+    .value.split("\n");
+  x.push("");
+  return x
+    .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
+    .join("\n");
+}
+
 export default function Home() {
   const [inputText, setInputText] = useState<string>(
     'def main():\n    # start writing your code here\n    print("Hello, World")'
@@ -140,21 +153,7 @@ export default function Home() {
                   <Editor
                     value={inputText}
                     onValueChange={(code) => setInputText(code)}
-                    highlight={(code) => {
-                      return hljs
-                        .highlight(code, {
-                          language: "python",
-                          ignoreIllegals: true,
-                        })
-                        .value.split("\n")
-                        .map(
-                          (line, i) =>
-                            `<span class='editorLineNumber'>${
-                              i + 1
-                            }</span>${line}`
-                        )
-                        .join("\n");
-                    }}
+                    highlight={highlightCodeWithLineNumbers}
                     padding={50}
                     textareaId="codeArea"
                     className={combinedClasses}
@@ -167,14 +166,11 @@ export default function Home() {
                 <EditorOutputBarWrapper>
                   <StyledOutputText>OUTPUT</StyledOutputText>
                 </EditorOutputBarWrapper>
-                <CodeOuputAreaWrapper
-                  style={{ whiteSpace: "pre-wrap" }}
-                  theme={theme}
-                >
+                <CodeOuputAreaWrapper theme={theme}>
                   {isOutputLoading ? (
                     <div>{"running the code ...\n"}</div>
                   ) : (
-                    <div>{output}</div>
+                    <div style={{ whiteSpace: "pre-wrap" }}>{output}</div>
                   )}
                 </CodeOuputAreaWrapper>
               </CodeOutputAreaGlobalWrapper>
