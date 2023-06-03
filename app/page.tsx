@@ -161,7 +161,12 @@ export default function Home() {
                     value={inputText}
                     onValueChange={(code) => setInputText(code)}
                     highlight={highlightCodeWithLineNumbers}
-                    padding={50}
+                    padding={{
+                      top: 20,
+                      left: 60,
+                      right: 20,
+                      bottom: 20,
+                    }}
                     textareaId="codeArea"
                     className={combinedClasses}
                     insertSpaces={true}
