@@ -45,18 +45,18 @@ const CodeAreaWrapper = styled.div`
   }
   text-align: left;
 `;
-
+// width: 30%;
+// margin-right: 20px;
 const CodeOuputAreaWrapper = styled.div`
   text-align: left;
   border: red;
-  width: 30%;
-  height: 640px;
+  height: 600px;
   background-color: #252626;
   padding: 10px;
+  font-size: 15px;
   color: ${(props) => props.theme.defaultFontColor};
   overflow: auto;
   border-left: 1px solid #000;
-  margin-right: 20px;
 `;
 
 const FlexDisplay = styled.div`
@@ -76,13 +76,29 @@ const StyledRunButton = styled.div`
   padding: 10px;
 `;
 
+const StyledOutputText = styled.div`
+  font-weight: 400;
+  width: 100px;
+  height: 40px;
+  padding: 10px;
+`;
+
 const EditorConfigBarWrapper = styled.div`
   background-color: #121212;
+`;
+
+const EditorOutputBarWrapper = styled.div`
+  background-color: #313333;
 `;
 
 const CodeEditorAreaGlobalWrapper = styled.div`
   width: 70%;
   margin-left: 20px;
+`;
+
+const CodeOutputAreaGlobalWrapper = styled.div`
+  width: 30%;
+  margin-right: 20px;
 `;
 
 export default function Home() {
@@ -147,16 +163,21 @@ export default function Home() {
                   />
                 </CodeAreaWrapper>
               </CodeEditorAreaGlobalWrapper>
-              <CodeOuputAreaWrapper
-                style={{ whiteSpace: "pre-wrap" }}
-                theme={theme}
-              >
-                {isOutputLoading ? (
-                  <div>{"running the code ...\n"}</div>
-                ) : (
-                  <div>{output}</div>
-                )}
-              </CodeOuputAreaWrapper>
+              <CodeOutputAreaGlobalWrapper>
+                <EditorOutputBarWrapper>
+                  <StyledOutputText>OUTPUT</StyledOutputText>
+                </EditorOutputBarWrapper>
+                <CodeOuputAreaWrapper
+                  style={{ whiteSpace: "pre-wrap" }}
+                  theme={theme}
+                >
+                  {isOutputLoading ? (
+                    <div>{"running the code ...\n"}</div>
+                  ) : (
+                    <div>{output}</div>
+                  )}
+                </CodeOuputAreaWrapper>
+              </CodeOutputAreaGlobalWrapper>
             </FlexDisplay>
           </CodeEditorGlobalWrapper>
         </div>
