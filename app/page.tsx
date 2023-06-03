@@ -92,12 +92,12 @@ const EditorOutputBarWrapper = styled.div`
 `;
 
 const CodeEditorAreaGlobalWrapper = styled.div`
-  width: 70%;
+  width: 65%;
   margin-left: 20px;
 `;
 
 const CodeOutputAreaGlobalWrapper = styled.div`
-  width: 30%;
+  width: 35%;
   margin-right: 20px;
 `;
 
@@ -111,6 +111,13 @@ function highlightCodeWithLineNumbers(code: string): React.ReactNode {
   x.push("");
   return x
     .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
+    .join("\n");
+}
+
+function RenderOutputWrapper(output: string): string {
+  let outputLines = output.split("\n");
+  return outputLines
+    .map((line) => `<div class='output'>${line}</div>`)
     .join("\n");
 }
 
@@ -164,13 +171,17 @@ export default function Home() {
               </CodeEditorAreaGlobalWrapper>
               <CodeOutputAreaGlobalWrapper>
                 <EditorOutputBarWrapper>
-                  <StyledOutputText>OUTPUT</StyledOutputText>
+                  <StyledOutputText>{"OUTPUT"}</StyledOutputText>
                 </EditorOutputBarWrapper>
                 <CodeOuputAreaWrapper theme={theme}>
                   {isOutputLoading ? (
-                    <div>{"running the code ...\n"}</div>
+                    <div>{"Running the code ...\n"}</div>
                   ) : (
-                    <div style={{ whiteSpace: "pre-wrap" }}>{output}</div>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: RenderOutputWrapper(output),
+                      }}
+                    />
                   )}
                 </CodeOuputAreaWrapper>
               </CodeOutputAreaGlobalWrapper>

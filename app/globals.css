@@ -34,3 +34,8 @@ body {
   width: 40px;
   font-weight: 100;
 }
+
+.output {
+  white-space: pre-wrap;
+  font-family: "Courier New", Courier, monospace;
+}

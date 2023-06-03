@@ -33,9 +33,9 @@ export async function runJarvilCode(
 ): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     try {
-      const pyCode = compile(inputCode);
+      const pyCode = compile(inputCode); // do static checks and generate python code using Jarvil compiler
       pyodide
-        .runPythonAsync(getPythonCodeTemplate(pyCode))
+        .runPythonAsync(getPythonCodeTemplate(pyCode)) // run the generated code using Pyodide compiler
         .then((result: string) => {
           // `stdout`
           resolve(result);
@@ -45,11 +45,11 @@ export async function runJarvilCode(
           resolve(error.message);
         });
     } catch (error) {
-      console.log(JSON.stringify(error));
-      console.log(error);
       // Jarvil static type-checking error
       if (typeof error == "string") {
-        resolve(error);
+        console.log(error);
+        var formattedError = error.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        resolve(formattedError);
       } else {
         resolve(
           "Something went wrong! Please attach the code and raise an issue on `https://github.com/spino17/jarvil/issues`"
