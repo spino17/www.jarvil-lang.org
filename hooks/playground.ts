@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import init from "../public/pkg/jarvil_wasm";
-import { runJarvilCode } from "@/utils/playground";
+import { JarvilCodeExecutionResult, runJarvilCode } from "@/utils/playground";
 import { loadPyodide } from "../public";
 
 interface InitializerResult {
@@ -26,7 +26,7 @@ export function useInitProgrammingEnviroment(): InitializerResult {
 
 export function useRunJarvilCode(inputText: string, pyodide: any) {
   const [isOutputLoading, setIsOutputLoading] = useState<boolean>(false);
-  const [output, setOutput] = useState<string>("");
+  const [output, setOutput] = useState<JarvilCodeExecutionResult | null>(null);
   useEffect(() => {
     if (isOutputLoading) {
       const inner_func = async () => {

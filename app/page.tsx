@@ -176,13 +176,14 @@ export default function Home() {
                 <CodeOuputAreaWrapper theme={theme}>
                   {isOutputLoading ? (
                     <div>{"Running the code ...\n"}</div>
-                  ) : (
+                  ) : output ? (
+                    // TODO - use output.kind to add extra information on the output
                     <div
                       dangerouslySetInnerHTML={{
-                        __html: RenderOutputWrapper(output),
+                        __html: RenderOutputWrapper(output.msg),
                       }}
                     />
-                  )}
+                  ) : null}
                 </CodeOuputAreaWrapper>
               </CodeOutputAreaGlobalWrapper>
             </FlexDisplay>
