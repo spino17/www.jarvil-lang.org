@@ -45,14 +45,14 @@ export async function runJarvilCode(
         .then((result: string) => {
           // `stdout`
           resolve({
-            msg: result,
+            msg: result.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
             kind: "success",
           });
         })
         .catch((error: Error) => {
           // Python runtime error
           resolve({
-            msg: error.message,
+            msg: error.message.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
             kind: "python_runtime_error",
           });
         });

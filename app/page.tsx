@@ -51,8 +51,8 @@ const CodeOuputAreaWrapper = styled.div`
   text-align: left;
   border: red;
   height: 600px;
-  background-color: #252626;
-  padding: 10px;
+  background-color: #111212;
+  padding: 20px;
   font-size: 15px;
   color: ${(props) => props.theme.defaultFontColor};
   overflow: auto;
@@ -69,7 +69,7 @@ const StyledRunButton = styled.div`
   font-weight: 400;
   &:hover {
     cursor: pointer;
-    background-color: #1f1f1f;
+    background-color: #313640;
   }
   width: 50px;
   height: 40px;
@@ -84,11 +84,11 @@ const StyledOutputText = styled.div`
 `;
 
 const EditorConfigBarWrapper = styled.div`
-  background-color: #121212;
+  background-color: #282c34;
 `;
 
 const EditorOutputBarWrapper = styled.div`
-  background-color: #313333;
+  background-color: #252626;
 `;
 
 const CodeEditorAreaGlobalWrapper = styled.div`
@@ -111,13 +111,6 @@ function highlightCodeWithLineNumbers(code: string): React.ReactNode {
   x.push("");
   return x
     .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
-    .join("\n");
-}
-
-function RenderOutputWrapper(output: string): string {
-  let outputLines = output.split("\n");
-  return outputLines
-    .map((line) => `<div class='output'>${line}</div>`)
     .join("\n");
 }
 
