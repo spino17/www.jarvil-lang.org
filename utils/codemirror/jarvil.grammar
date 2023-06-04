@@ -5,6 +5,10 @@
   prefix,
   times @left,
   plus @left,
+  shift @left,
+  bitand @left,
+  xor @left,
+  bitor @left,
   compare @left,
   as @left,
   and @left,
@@ -40,7 +44,7 @@ TypeList { "(" commaSep<type> ")"}
 RLambdaDefinition { kw<"lambda"> CallableBody }
 
 RVariableDeclaration {
-  RLambdaDefinition | expression
+  RLambdaDefinition | ExpressionStatement
 }
 
 VariableDeclarationStatement { kw<"let"> VariableName "=" RVariableDeclaration }
@@ -95,7 +99,6 @@ simpleStatement {
 }
 
 smallStatement {
-  VariableDeclarationStatement |
   AssignStatement { expression "=" expression } |
   ExpressionStatement { expression } |
   BreakStatement { kw<"break"> } |
@@ -105,6 +108,7 @@ smallStatement {
 }
 
 compoundStatement {
+  VariableDeclarationStatement |
   IfStatement |
   WhileStatement { kw<"while"> testNamed Body elseClause? } |
   ForStatement { kw<"async">? kw<"for"> commaSep<"*"? expression> kw<"in"> commaSep<test> Body elseClause? } |
