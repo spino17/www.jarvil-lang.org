@@ -6,6 +6,10 @@ body {
   margin: 0;
 }
 
+.CodeMirror {
+  font-size: 15px;
+}
+
 .editor {
   font-family: consolas;
   font-weight: 300;

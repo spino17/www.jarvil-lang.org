@@ -16,8 +16,9 @@ import python from "highlight.js/lib/languages/python"; // Import the language m
 import "highlight.js/styles/atom-one-dark.css";
 import CodeMirror from "@uiw/react-codemirror";
 import { python as py } from "@codemirror/lang-python";
-import { oneDark } from "@codemirror/theme-one-dark";
+// import { oneDark } from "@codemirror/theme-one-dark";
 import Prism from "prismjs";
+import { oneDark } from "@/utils/theme";
 
 const consolasFont = localFont({
   src: "../public/Consolas.ttf",
@@ -124,10 +125,28 @@ export default function Home() {
     pyodide
   );
   const { theme } = useContext(LocalThemeContext);
-  const additionalClass = "editor";
+  // const additionalClass = "editor";
+  const additionalClass = "CodeMirror";
   const inheritClass = consolasFont.className;
   const combinedClasses = `${inheritClass} ${additionalClass}`;
   hljs.registerLanguage("python", python);
+
+  /*
+  <Editor
+                    value={inputText}
+                    onValueChange={(code) => setInputText(code)}
+                    highlight={highlightCodeWithLineNumbers}
+                    padding={{
+                      top: 20,
+                      left: 60,
+                      right: 20,
+                      bottom: 20,
+                    }}
+                    textareaId="codeArea"
+                    className={combinedClasses}
+                    insertSpaces={true}
+                    tabSize={4}
+                  />*/
 
   return (
     <BootstrapCenterWrapper theme={theme}>
@@ -150,20 +169,16 @@ export default function Home() {
                   </StyledRunButton>
                 </EditorConfigBarWrapper>
                 <CodeAreaWrapper>
-                  <Editor
+                  <CodeMirror
                     value={inputText}
-                    onValueChange={(code) => setInputText(code)}
-                    highlight={highlightCodeWithLineNumbers}
-                    padding={{
-                      top: 20,
-                      left: 60,
-                      right: 20,
-                      bottom: 20,
+                    height="600px"
+                    extensions={[py()]}
+                    onChange={(code) => setInputText(code)}
+                    theme={oneDark}
+                    className="CodeMirror"
+                    basicSetup={{
+                      tabSize: 4,
                     }}
-                    textareaId="codeArea"
-                    className={combinedClasses}
-                    insertSpaces={true}
-                    tabSize={4}
                   />
                 </CodeAreaWrapper>
               </CodeEditorAreaGlobalWrapper>
