@@ -126,8 +126,12 @@ The highlighting style for code in the One Dark theme.
 const oneDarkHighlightStyle = /*@__PURE__*/ HighlightStyle.define([
   { tag: tags.keyword, color: violet },
   {
+    tag: [tags.name],
+    color: "white",
+  },
+  {
     tag: [
-      tags.name,
+      // tags.name,
       tags.deleted,
       tags.character,
       tags.propertyName,
@@ -176,7 +180,7 @@ const oneDarkHighlightStyle = /*@__PURE__*/ HighlightStyle.define([
     ],
     color: cyan,
   },
-  { tag: [tags.meta, tags.comment], color: stone },
+  { tag: [tags.meta, tags.comment], color: stone, fontStyle: "italic" },
   { tag: tags.strong, fontWeight: "bold" },
   { tag: tags.emphasis, fontStyle: "italic" },
   { tag: tags.strikethrough, textDecoration: "line-through" },
