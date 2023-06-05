@@ -1,11 +1,10 @@
-import { parser } from "@lezer/python";
+// import { parser } from "@lezer/python";
+import { parser } from "./parser";
 import {
   // syntaxTree,
   LRLanguage,
   indentNodeProp,
-  delimitedIndent,
   foldNodeProp,
-  foldInside,
   LanguageSupport,
 } from "@codemirror/language";
 // import { NodeWeakMap, IterMode } from "@lezer/common";
@@ -14,6 +13,7 @@ import {
   ifNotIn,
   completeFromList,
 } from "@codemirror/autocomplete";
+import context from "react-bootstrap/esm/AccordionContext";
 
 // @ts-check
 /*
@@ -230,6 +230,13 @@ const jarvilLanguage = LRLanguage.define({
             ? _a
             : context.continue();
         },
+        StructBody: (context) => {
+          var _a;
+          return (_a = indentBody(context, context.node)) !== null &&
+            _a !== void 0
+            ? _a
+            : context.continue();
+        },
         "String FormatString BlockComment": () => null,
         IfStatement: (cx) =>
           /^\s*(else:|elif )/.test(cx.textAfter)
@@ -255,10 +262,6 @@ const jarvilLanguage = LRLanguage.define({
         },
       }),
       foldNodeProp.add({
-        Body: (node, state) => ({
-          from: node.from + 1,
-          to: node.to - (node.to == state.doc.length ? 0 : 1),
-        }),
         BlockComment: (node, state) => ({
           from: node.from + 2,
           to: node.to - 2,

@@ -16,6 +16,7 @@ import python from "highlight.js/lib/languages/python"; // Import the language m
 import "highlight.js/styles/atom-one-dark.css";
 import CodeMirror from "@uiw/react-codemirror";
 import { python as py } from "@codemirror/lang-python";
+import { jarvil } from "../utils/codemirror/core";
 // import { oneDark } from "@codemirror/theme-one-dark";
 import Prism from "prismjs";
 import { oneDark } from "@/utils/theme";
@@ -172,7 +173,8 @@ export default function Home() {
                   <CodeMirror
                     value={inputText}
                     height="600px"
-                    extensions={[py()]}
+                    extensions={[jarvil()]}
+                    // extensions={[py()]}
                     onChange={(code) => setInputText(code)}
                     theme={oneDark}
                     className="CodeMirror"
