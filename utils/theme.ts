@@ -167,10 +167,14 @@ const oneDarkHighlightStyle = /*@__PURE__*/ HighlightStyle.define([
       tags.changed,
       tags.annotation,
       tags.modifier,
-      tags.self,
+      // tags.self,
       tags.namespace,
     ],
     color: chalky,
+  },
+  {
+    tag: [tags.self],
+    color: "#ffa500",
   },
   {
     tag: [
