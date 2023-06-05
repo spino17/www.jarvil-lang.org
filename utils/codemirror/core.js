@@ -13,7 +13,6 @@ import {
   ifNotIn,
   completeFromList,
 } from "@codemirror/autocomplete";
-import context from "react-bootstrap/esm/AccordionContext";
 
 // @ts-check
 /*
@@ -114,7 +113,7 @@ function getScope(doc, node) {
   return completions;
 }*/
 // const Identifier = /^[\w\xa1-\uffff][\w\d\xa1-\uffff]*$/;
-const dontComplete = ["String", "FormatString", "Comment", "PropertyName"];
+const dontComplete = ["String", "LineComment", "BlockComment", "PropertyName"];
 /*
 function localCompletionSource(context) {
   let inner = syntaxTree(context.state).resolveInner(context.pos, -1);
@@ -143,13 +142,12 @@ const globals = ["False", "True"]
   )
   .concat(["print"].map((n) => ({ label: n, type: "function" })));
 const snippets = [
-  /*
-  snippetCompletion("def ${name}(${params}):\n\t${}", {
+  snippetCompletion("def ${functionName}() -> ReturnType:\n\t${}", {
     label: "def",
     detail: "function",
     type: "keyword",
-  }),*/
-  snippetCompletion("for ${name} in ${collection}:\n\t${}", {
+  }),
+  snippetCompletion("for ${x} in ${iterable}:\n\t${}", {
     label: "for",
     detail: "loop",
     type: "keyword",
@@ -170,21 +168,18 @@ const snippets = [
     type: "keyword",
   }),
   snippetCompletion(
-    "type ${name} struct:\n\tdef __init__(${params}) -> ${name}:\n\t\t${}",
+    "type ${StructName} struct:\n\tdef __init__() -> ${StructName}:\n\t\t${}",
     {
       label: "type",
       detail: "struct",
       type: "keyword",
     }
   ),
-  snippetCompletion(
-    "type ${name} lambda = (${param_types}) -> ${return_type}",
-    {
-      label: "type",
-      detail: "lambda",
-      type: "keyword",
-    }
-  ),
+  snippetCompletion("type ${LambdaTypeName} lambda = () -> ${ReturnType}", {
+    label: "type",
+    detail: "lambda",
+    type: "keyword",
+  }),
 ];
 /*
 Autocompletion for built-in Jarvil globals and keywords.
@@ -201,7 +196,7 @@ function indentBody(context, node) {
   // Don't consider blank, deindented lines at the end of the
   // block part of the block
   if (
-    /^\s*($|#)/.test(line.text) &&
+    /^\s*($|# | \/\/)/.test(line.text) &&
     context.node.to < to + 100 &&
     !/\S/.test(context.state.sliceDoc(to, context.node.to)) &&
     context.lineIndent(context.pos, -1) <= base
@@ -211,7 +206,7 @@ function indentBody(context, node) {
   // indentation than the block should probably be handled by the next
   // level
   if (
-    /^\s*(else:|elif )/.test(context.textAfter) &&
+    /^\s*(else:|elif |except |finally:)/.test(context.textAfter) &&
     context.lineIndent(context.pos, -1) > base
   )
     return null;
@@ -237,7 +232,7 @@ const jarvilLanguage = LRLanguage.define({
             ? _a
             : context.continue();
         },
-        "String FormatString BlockComment": () => null,
+        "String BlockComment": () => null,
         IfStatement: (cx) =>
           /^\s*(else:|elif )/.test(cx.textAfter)
             ? cx.baseIndent
@@ -273,7 +268,7 @@ const jarvilLanguage = LRLanguage.define({
     closeBrackets: {
       brackets: ["(", "[", "{", "'", '"'],
     },
-    commentTokens: { line: "#", block: { open: "/*", close: "*/" } },
+    commentTokens: { block: { open: "/*", close: "*/" } },
     indentOnInput: /^\s*([\}\]\)]|else:|elif )$/,
   },
 });

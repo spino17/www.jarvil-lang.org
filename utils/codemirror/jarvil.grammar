@@ -180,18 +180,15 @@ LineComment { HashComment | SlashComment }
 
   CompareOp { ">" | ">=" | "<" | "<=" | "==" | "!=" }
 
-  @precedence {
-    shortString
-    identifier
-  }
+  @precedence { shortString, identifier }
+
+  shortString { "'" (!['\\\n\r] | "\\" _)* "'"? | '"' (!["\\\n\r] | "\\" _)* '"'? }
 
   identifierChar { @asciiLetter | $[_\u{a1}-\u{10ffff}] }
 
   word { identifierChar (@digit | identifierChar)* }
 
   identifier { word }
-
-  shortString { ("'" (!['\\\n\r] | "\\" _)* "'"? | '"' (!["\\\n\r] | "\\" _)* '"'?) }
 
   Number {
     (@digit ("_" | @digit)* ("." @digit ("_" | @digit)*)? | "." @digit ("_" | @digit)*)
