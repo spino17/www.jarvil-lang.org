@@ -91,6 +91,10 @@ const oneDarkTheme = /*@__PURE__*/ EditorView.theme(
       color: stone,
       border: "none",
     },
+    ".cm-gutter.cm-lineNumbers": {
+      // backgroundColor: "#24272e",
+      width: "40px",
+    },
     ".cm-activeLineGutter": {
       backgroundColor: highlightBackground,
     },
