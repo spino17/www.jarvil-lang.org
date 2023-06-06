@@ -42,43 +42,6 @@ HashMapType { "{" type ":" type "}" }
 
 type[@isGroup=Type] { kw<"int"> | kw<"bool"> | kw<"str"> | kw<"float"> | TypeIdentifier | TupleType | ArrayType | HashMapType }
 
-MatchStatement {
-  skw<"match"> "*"? expression MatchBody { ":" newline indent MatchClause+ (dedent | eof) }
-}
-
-MatchClause {
-  skw<"case"> commaSep<pattern> Guard { kw<"if"> expression }? Body
-}
-
-pattern[@isGroup=Pattern] {
-  CapturePattern { VariableName } |
-  LiteralPattern |
-  AsPattern { pattern !as kw<"as"> VariableName } |
-  OrPattern { pattern (!or LogicOp{"|"} pattern)+ } |
-  AttributePattern |
-  SequencePattern |
-  MappingPattern |
-  StarPattern { "*" !prefix pattern } |
-  ClassPattern { (VariableName | AttributePattern) PatternArgList }
-}
-
-AttributePattern { VariableName ("." PropertyName)+ }
-
-LiteralPattern {
-  ArithOp{"-"}? Number (ArithOp{"+"|"-"} Number)? |
-  String |
-  kw<"None"> |
-  @specialize[@name=Boolean]<identifier, "True" | "False">
-}
-
-PatternArgList { "(" commaSep<pattern | KeywordPattern { VariableName "=" pattern }> ")" }
-
-SequencePattern { "[" commaSep<pattern> "]" | "(" commaSep<pattern> ")" }
-
-MappingPattern { "{" commaSep<"**" pattern | (VariableName | LiteralPattern) ":" pattern> "}" }
-
-ClassDefinition { kw<"class"> VariableName ArgList? Body }
-
 TypeDef { ":" test }
 
 statement[@isGroup=Statement] { simpleStatement | compoundStatement }
@@ -90,19 +53,11 @@ simpleStatement {
 
 smallStatement {
   AssignStatement { expressions (TypeDef? (AssignOp{"="} (YieldExpression | expressions))+ | TypeDef) } |
-  UpdateStatement { expressions UpdateOp (YieldExpression | commaSep<test>) } |
   ExpressionStatement { expressions } |
-  DeleteStatement { kw<"del"> commaSep<expression> } |
-  PassStatement { kw<"pass"> } |
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   ReturnStatement { kw<"return"> commaSep<test | "*" expression>? } |
-  YieldStatement { yield } |
-  PrintStatement { printKeyword test } |
-  RaiseStatement { kw<"raise"> (test (kw<"from"> test | ("," test ("," test)?))?)? } |
-  ImportStatement |
-  ScopeStatement { (kw<"global"> | kw<"nonlocal">) commaSep<VariableName> } |
-  AssertStatement { kw<"assert"> commaSep<test> }
+  PrintStatement { printKeyword test }
 }
 
 expressions { commaSep<"*" expression | test> }
@@ -122,10 +77,7 @@ compoundStatement {
   ForStatement { kw<"async">? kw<"for"> commaSep<"*"? expression> kw<"in"> commaSep<test> Body elseClause? } |
   TryStatement |
   WithStatement { kw<"async">? kw<"with"> commaSep<test (kw<"as"> VariableName)?> Body } |
-  FunctionDefinition |
-  ClassDefinition |
-  DecoratedStatement { Decorator+ (ClassDefinition | FunctionDefinition) } |
-  MatchStatement
+  FunctionDefinition
 }
 
 elseClause { kw<"else"> Body }
