@@ -32,6 +32,8 @@ TypeIdentifier { identifier }
 
 ArgName { identifier }
 
+FieldIdentifier { identifier }
+
 TupleType { "(" type "," commaSep<type> ")" }
 
 ArrayType { "[" type "]" }
@@ -52,7 +54,8 @@ smallStatement {
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   ReturnStatement { kw<"return"> expression? } |
-  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? }
+  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? } |
+  FieldNameTypeSpec { FieldIdentifier ":" type }
 }
 
 commaSep<expr> { expr ("," expr)* ","? }
@@ -61,7 +64,8 @@ compoundStatement {
   IfStatement |
   WhileStatement { kw<"while"> expression Body } |
   ForStatement { kw<"for"> VariableName kw<"in"> expression Body } |
-  FunctionDefinition
+  FunctionDefinition |
+  StructTypeDefinition { kw<"type"> VariableName kw<"struct"> Body }
 }
 
 elseClause { kw<"else"> Body }
@@ -77,14 +81,6 @@ Body { ":" (simpleStatement | newline indent statement+ (dedent | eof)) }
 test {
  testInner |
  ConditionalExpression { testInner !cond kw<"if"> testInner kw<"else"> test }
-}
-
-testNoCond {
-  testInner
-}
-
-testNamed {
-  test | NamedExpression { test AssignOp{":="} test }
 }
 
 testInner { expression }
@@ -161,15 +157,6 @@ VariableName { identifier }
 
 PropertyName { identifier }
 
-compFor {
-  kw<"async">? kw<"for"> commaSep<expression> kw<"in"> testInner (compFor | compIf)?
-}
-
-compIf {
-  kw<"if"> testNoCond (compFor | compIf)?
-}
-// FIXME Is it possible to distinguish between VariableName and VariableDefinition?
-
 kw<term> { @specialize[@name={term}]<identifier, term> }
 
 @skip {} {
@@ -196,8 +183,6 @@ kw<term> { @specialize[@name={term}]<identifier, term> }
 FormatReplacement<start> { start YieldExpression FormatConversion? (formatStringSpec | "}") }
 
 @context trackIndent from "./tokens.js"
-
-@external tokens legacyPrint from "./tokens.js" { printKeyword[@name="print"] }
 
 @external tokens indentation from "./tokens" { indent, dedent }
 
