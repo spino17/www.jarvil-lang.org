@@ -6,15 +6,16 @@ import {
   indentNodeProp,
   foldNodeProp,
   LanguageSupport,
+  TreeIndentContext,
 } from "@codemirror/language";
+import { Completion } from "@codemirror/autocomplete";
 // import { NodeWeakMap, IterMode } from "@lezer/common";
+import { SyntaxNode } from "@lezer/common";
 import {
   snippetCompletion,
   ifNotIn,
   completeFromList,
 } from "@codemirror/autocomplete";
-
-// @ts-check
 /*
 const cache = new NodeWeakMap();
 const ScopeNodes = new Set([
@@ -135,7 +136,7 @@ function localCompletionSource(context) {
   };
 }
 */
-const globals = ["False", "True"]
+const globals: Completion[] = ["False", "True"]
   .map((n) => ({ label: n, type: "constant" }))
   .concat(
     ["bool", "float", "int", "str"].map((n) => ({ label: n, type: "type" }))
@@ -189,8 +190,13 @@ const globalCompletion = ifNotIn(
   completeFromList(globals.concat(snippets))
 );
 
-function indentBody(context, node) {
+function indentBody(context: TreeIndentContext, node: SyntaxNode) {
   let base = context.lineIndent(node.from);
+  //let previousLine = node.prevSibling;
+  //if (previousLine) {
+  //  base = context.lineIndent(previousLine.from);
+  //}
+  /*
   let line = context.lineAt(context.pos, -1),
     to = line.from + line.text.length;
   // Don't consider blank, deindented lines at the end of the
@@ -209,8 +215,8 @@ function indentBody(context, node) {
     /^\s*(else:|elif |except |finally:)/.test(context.textAfter) &&
     context.lineIndent(context.pos, -1) > base
   )
-    return null;
-  return base + context.unit;
+    return null;*/
+  return base + 2 * context.unit;
 }
 
 const jarvilLanguage = LRLanguage.define({
@@ -218,43 +224,7 @@ const jarvilLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       indentNodeProp.add({
-        Body: (context) => {
-          var _a;
-          return (_a = indentBody(context, context.node)) !== null &&
-            _a !== void 0
-            ? _a
-            : context.continue();
-        },
-        StructBody: (context) => {
-          var _a;
-          return (_a = indentBody(context, context.node)) !== null &&
-            _a !== void 0
-            ? _a
-            : context.continue();
-        },
         "String BlockComment": () => null,
-        IfStatement: (cx) =>
-          /^\s*(else:|elif )/.test(cx.textAfter)
-            ? cx.baseIndent
-            : cx.continue(),
-        Script: (context) => {
-          if (
-            context.pos + /\s*/.exec(context.textAfter)[0].length >=
-            context.node.to
-          ) {
-            let endBody = null;
-            for (let cur = context.node, to = cur.to; ; ) {
-              cur = cur.lastChild;
-              if (!cur || cur.to != to) break;
-              if (cur.type.name == "Body") endBody = cur;
-            }
-            if (endBody) {
-              let bodyIndent = indentBody(context, endBody);
-              if (bodyIndent != null) return bodyIndent;
-            }
-          }
-          return context.continue();
-        },
       }),
       foldNodeProp.add({
         BlockComment: (node, state) => ({
