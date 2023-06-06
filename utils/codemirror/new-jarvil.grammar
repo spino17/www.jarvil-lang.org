@@ -58,9 +58,14 @@ smallStatement {
   FieldNameTypeSpec { FieldIdentifier ":" type }
 }
 
-commaSep<expr> { expr ("," expr)* ","? }
+commaSep<expr> { expr ("," expr)* }
+
+returnType { "->" type }
+
+RLambdaDefinition { kw<"lambda"> "(" commaSep<ArgName ":" type>? ")" returnType? Body }
 
 compoundStatement {
+  VariableDeclarationStatement { kw<"let"> VariableName "=" (RLambdaDefinition | expression (newline | eof)) } |
   IfStatement |
   WhileStatement { kw<"while"> expression Body } |
   ForStatement { kw<"for"> VariableName kw<"in"> expression Body } |
