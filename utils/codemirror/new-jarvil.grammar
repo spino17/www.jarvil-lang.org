@@ -51,9 +51,8 @@ smallStatement {
   ExpressionStatement { expression } |
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
-  ReturnStatement { kw<"return"> commaSep<test | "*" expression>? } |
-  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? } |
-  PrintStatement { printKeyword test }
+  ReturnStatement { kw<"return"> expression? } |
+  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? }
 }
 
 commaSep<expr> { expr ("," expr)* ","? }
@@ -88,61 +87,79 @@ testNamed {
   test | NamedExpression { test AssignOp{":="} test }
 }
 
-testInner { binaryTest | unaryTest | expression }
-
-binaryTest[@name="BinaryExpression"] {
-  testInner !or kw<"or"> testInner |
-  testInner !and kw<"and"> testInner |
-  testInner !compare (CompareOp | kw<"in"> | kw<"not"> kw<"in"> | kw<"is"> kw<"not">?) testInner
-}
-
-unaryTest[@name="UnaryExpression"] { kw<"not"> testInner }
+testInner { expression }
 
 expression[@isGroup=Expression] {
   BinaryExpression |
-  UnaryExpression { !prefix (ArithOp{"+" | "-"} | BitOp{"~"}) expression } |
-  ParenthesizedExpression |
-  TupleExpression |
-  ArrayExpression |
-  DictionaryExpression |
-  SetExpression |
-  CallExpression { expression !trail ArgList } |
-  MemberExpression { expression !trail (subscript | "." PropertyName) } |
-  VariableName |
-  Number |
-  String | FormatString |
-  ContinuedString { (String | FormatString) (String | FormatString)+ } |
-  "..." |
-  kw<"None"> |
-  @specialize[@name=Boolean]<identifier, "True" | "False">
+  UnaryExpression
 }
-
-subscript[@export] {
-  "[" commaSep<testNamed | testNamed? ":" testNamed? (":" testNamed?)?> "]"
-}
-
-ParenthesizedExpression { "(" (testNamed | "*" expression | YieldExpression) ")" }
-
-TupleExpression { "(" ((testNamed | "*" expression) (("," (testNamed | "*" expression))+ ","? | ","))? ")" }
-
-ArrayExpression { "[" commaSep<testNamed | "*" expression>? "]" }
-
-DictionaryExpression { "{" commaSep<test ":" test | "**" expression>? "}" }
-
-SetExpression { "{" commaSep<test | "*" expression> "}" }
 
 yield { kw<"yield"> (kw<"from"> test | commaSep<test | "*" expression>) }
 
 YieldExpression { yield }
 
+UnaryExpression { OnlyUnaryExpression | AtomicExpression }
+
 BinaryExpression {
-  expression !plus ArithOp{"+" | "-"} expression |
-  expression !times ArithOp{"*" | "@" | "/" | "%" | "//"} expression
+  expression !plus ArithPlusOp expression |
+  expression !times ArithTimesOp expression |
+  expression !compare CompareOp expression |
+  expression !or kw<"or"> expression |
+  expression !and kw<"and"> expression
 }
 
-ArgList { "(" commaSep<argument>? ")" }
+OnlyUnaryExpression { ("+" | "-" | kw<"not">) UnaryExpression }
 
-argument { test compFor? | VariableName AssignOp{"=" | ":="} test | "**" test | "*" test }
+AtomicExpression {
+  Number |
+  String |
+  Atom |
+  ParenthesizedExpression |
+  TupleExpression |
+  ArrayExpression |
+  DictionaryExpression |
+  SetExpression |
+  FormatString |
+  ContinuedString { (String | FormatString) (String | FormatString)+ } |
+  @specialize[@name=Boolean]<identifier, "True" | "False">
+}
+
+Atom {
+  CallAtom { Atom ArgList } |
+  MethodAccess { Atom "." PropertyName !trail ArgList } |
+  PropertyAccess { Atom "." PropertyName } |
+  IndexAccess { Atom "[" expression "]" } |
+  AtomStart
+}
+
+AtomStart {
+  Self { kw<"self"> } |
+  CallExpression |
+  ClassMethodCallExpression |
+  VariableName
+}
+
+CallExpression { VariableName !trail ArgList}
+
+ClassMethodCallExpression { TypeIdentifier "::" PropertyName ArgList }
+
+ArgList { "(" commaSep<expression>? ")" }
+
+ParenthesizedExpression { "(" expression ")" }
+
+InnerTupleExpression { expression "," commaSep<expression> }
+
+TupleExpression { "(" InnerTupleExpression? ")" }
+
+ArrayExpression { "[" commaSep<expression>? "]" }
+
+DictionaryExpression { "{" commaSep<expression ":" expression>? "}" }
+
+SetExpression { "{" commaSep<expression> "}" }
+
+VariableName { identifier }
+
+PropertyName { identifier }
 
 compFor {
   kw<"async">? kw<"for"> commaSep<expression> kw<"in"> testInner (compFor | compIf)?
@@ -151,12 +168,7 @@ compFor {
 compIf {
   kw<"if"> testNoCond (compFor | compIf)?
 }
-
 // FIXME Is it possible to distinguish between VariableName and VariableDefinition?
-
-VariableName { identifier }
-
-PropertyName { word }
 
 kw<term> { @specialize[@name={term}]<identifier, term> }
 
@@ -181,7 +193,7 @@ kw<term> { @specialize[@name={term}]<identifier, term> }
   }
 }
 
-FormatReplacement<start> { start (YieldExpression | commaSep<"*"? test>) FormatConversion? (formatStringSpec | "}") }
+FormatReplacement<start> { start YieldExpression FormatConversion? (formatStringSpec | "}") }
 
 @context trackIndent from "./tokens.js"
 
@@ -197,6 +209,12 @@ FormatReplacement<start> { start (YieldExpression | commaSep<"*"? test>) FormatC
 @external tokens formatString2l from "./tokens" { formatString2lContent, formatString2lBrace[@name="{"], formatString2lEnd }
 
 @tokens {
+  ArithPlusOp { "+" | "-" }
+
+  Divide { "/" }
+
+  ArithTimesOp { "*" | Divide }
+
   CompareOp { "<" | ">" | $[<>=!] "=" | "<>" }
 
   @precedence {
