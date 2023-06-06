@@ -19,8 +19,6 @@
 
 @skip { space | newlineBracketed | Comment | blankLine }
 
-Decorator { At dottedName ArgList? newline }
-
 FunctionDefinition {
   kw<"def"> VariableName
   ParamList
@@ -42,32 +40,20 @@ HashMapType { "{" type ":" type "}" }
 
 type[@isGroup=Type] { kw<"int"> | kw<"bool"> | kw<"str"> | kw<"float"> | TypeIdentifier | TupleType | ArrayType | HashMapType }
 
-TypeDef { ":" test }
-
 statement[@isGroup=Statement] { simpleStatement | compoundStatement }
 
 simpleStatement {
-  smallStatement (newline | eof) |
-  StatementGroup { smallStatement (";" smallStatement?)+ (newline | eof) }
+  smallStatement (newline | eof)
 }
 
 smallStatement {
-  AssignStatement { expressions (TypeDef? (AssignOp{"="} (YieldExpression | expressions))+ | TypeDef) } |
-  ExpressionStatement { expressions } |
+  AssignStatement { expression  "=" expression } |
+  ExpressionStatement { expression } |
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   ReturnStatement { kw<"return"> commaSep<test | "*" expression>? } |
   PrintStatement { printKeyword test }
 }
-
-expressions { commaSep<"*" expression | test> }
-
-ImportStatement {
-  kw<"import"> dottedName (kw<"as"> VariableName)? |
-  kw<"from"> (("." | "...")+ dottedName? | dottedName) kw<"import"> ("*" | importList | importedNames)
-}
-importedNames { commaSep<VariableName | VariableName kw<"as"> VariableName> }
-importList[@export] { "(" importedNames ")" }
 
 commaSep<expr> { expr ("," expr)* ","? }
 
@@ -200,11 +186,7 @@ VariableName { identifier }
 
 PropertyName { word }
 
-dottedName { VariableName ("." VariableName)* }
-
 kw<term> { @specialize[@name={term}]<identifier, term> }
-
-skw<term> { @extend[@name={term}]<identifier, term> }
 
 @skip {} {
   String {
@@ -244,8 +226,6 @@ FormatReplacement<start> { start (YieldExpression | commaSep<"*"? test>) FormatC
 
 @tokens {
   CompareOp { "<" | ">" | $[<>=!] "=" | "<>" }
-
-  UpdateOp { ($[+\-@%&|^] | "<<" | ">>" | "*" "*"? | "/" "/"?) "=" }
 
   @precedence {
     longStringStart<"'">, longStringStart<'"'>, longFormatStringStart<"'">, longFormatStringStart<'"'>,
@@ -294,8 +274,6 @@ FormatReplacement<start> { start (YieldExpression | commaSep<"*"? test>) FormatC
   Comment { "#" ![\n\r]* }
 
   space { ($[ \t\f] | "\\" $[\n\r])+ }
-
-  At { "@" }
 
   "..."[@name=Ellipsis]
 
