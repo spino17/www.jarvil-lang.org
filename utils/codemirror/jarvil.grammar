@@ -17,6 +17,18 @@
   @else blockCommentContent
 }
 
+@local tokens {
+  stringSingleEnd { "'" }
+  stringSingleNewline { "\n" }
+  @else stringSingleContent
+}
+
+@local tokens {
+  stringDoubleEnd { '"' }
+  stringDoubleNewline { "\n" }
+  @else stringDoubleContent
+}
+
 Body { ":" newline indent statement+ (dedent | eof) }
 
 statement[@isGroup=Statement] { simpleStatement | compoundStatement }
@@ -146,7 +158,8 @@ kw<term> { @specialize[@name={term}]<identifier, term> }
 
 @skip {} {
   String {
-    shortString
+    "'" (stringSingleContent | stringSingleNewline)* stringSingleEnd |
+    '"' (stringDoubleContent | stringDoubleNewline)* stringDoubleEnd
   }
 
   blankLine {
@@ -172,10 +185,6 @@ LineComment { HashComment | SlashComment }
   ArithTimesOp { "*" | Divide }
 
   CompareOp { ">" | ">=" | "<" | "<=" | "==" | "!=" }
-
-  @precedence { shortString, identifier }
-
-  shortString { "'" (!['\\\n\r] | "\\" _)* "'"? | '"' (!["\\\n\r] | "\\" _)* '"'? }
 
   identifierChar { @asciiLetter | $[_\u{a1}-\u{10ffff}] }
 
