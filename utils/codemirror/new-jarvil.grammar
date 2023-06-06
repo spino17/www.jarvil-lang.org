@@ -52,6 +52,7 @@ smallStatement {
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   ReturnStatement { kw<"return"> commaSep<test | "*" expression>? } |
+  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? } |
   PrintStatement { printKeyword test }
 }
 
@@ -59,26 +60,17 @@ commaSep<expr> { expr ("," expr)* ","? }
 
 compoundStatement {
   IfStatement |
-  WhileStatement { kw<"while"> testNamed Body elseClause? } |
-  ForStatement { kw<"async">? kw<"for"> commaSep<"*"? expression> kw<"in"> commaSep<test> Body elseClause? } |
-  TryStatement |
-  WithStatement { kw<"async">? kw<"with"> commaSep<test (kw<"as"> VariableName)?> Body } |
+  WhileStatement { kw<"while"> expression Body } |
+  ForStatement { kw<"for"> VariableName kw<"in"> expression Body } |
   FunctionDefinition
 }
 
 elseClause { kw<"else"> Body }
 
 IfStatement {
-  kw<"if"> testNamed Body
-  (kw<"elif"> testNamed? Body)*
+  kw<"if"> expression Body
+  (kw<"elif"> expression Body)*
   elseClause?
-}
-
-TryStatement {
-  kw<"try"> Body
-  (kw<"except"> (test ((kw<"as"> | ",") VariableName)?)? Body)*
-  elseClause?
-  (kw<"finally"> Body)?
 }
 
 Body { ":" (simpleStatement | newline indent statement+ (dedent | eof)) }
