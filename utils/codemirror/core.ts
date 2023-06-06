@@ -1,5 +1,5 @@
 // import { parser } from "@lezer/python";
-import { parser } from "./parser";
+import { parser } from "./test";
 import {
   // syntaxTree,
   LRLanguage,
@@ -192,17 +192,12 @@ const globalCompletion = ifNotIn(
 
 function indentBody(context: TreeIndentContext, node: SyntaxNode) {
   let base = context.lineIndent(node.from);
-  //let previousLine = node.prevSibling;
-  //if (previousLine) {
-  //  base = context.lineIndent(previousLine.from);
-  //}
-  /*
   let line = context.lineAt(context.pos, -1),
     to = line.from + line.text.length;
   // Don't consider blank, deindented lines at the end of the
   // block part of the block
   if (
-    /^\s*($|# | \/\/)/.test(line.text) &&
+    /^\s*($|#)/.test(line.text) &&
     context.node.to < to + 100 &&
     !/\S/.test(context.state.sliceDoc(to, context.node.to)) &&
     context.lineIndent(context.pos, -1) <= base
@@ -215,8 +210,8 @@ function indentBody(context: TreeIndentContext, node: SyntaxNode) {
     /^\s*(else:|elif |except |finally:)/.test(context.textAfter) &&
     context.lineIndent(context.pos, -1) > base
   )
-    return null;*/
-  return base + 2 * context.unit;
+    return null;
+  return base + context.unit;
 }
 
 const jarvilLanguage = LRLanguage.define({
@@ -224,7 +219,38 @@ const jarvilLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       indentNodeProp.add({
+        Body: (context) => {
+          var _a;
+          return (_a = indentBody(context, context.node)) !== null &&
+            _a !== void 0
+            ? _a
+            : context.continue();
+        },
+        IfStatement: (cx) =>
+          /^\s*(else:|elif )/.test(cx.textAfter)
+            ? cx.baseIndent
+            : cx.continue(),
         "String BlockComment": () => null,
+        Script: (context) => {
+          if (
+            // @ts-ignore
+            context.pos + /\s*/.exec(context.textAfter)[0].length >=
+            context.node.to
+          ) {
+            let endBody = null;
+            for (let cur = context.node, to = cur.to; ; ) {
+              // @ts-ignore
+              cur = cur.lastChild;
+              if (!cur || cur.to != to) break;
+              if (cur.type.name == "Body") endBody = cur;
+            }
+            if (endBody) {
+              let bodyIndent = indentBody(context, endBody);
+              if (bodyIndent != null) return bodyIndent;
+            }
+          }
+          return context.continue();
+        },
       }),
       foldNodeProp.add({
         BlockComment: (node, state) => ({
