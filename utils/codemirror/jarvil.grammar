@@ -31,7 +31,8 @@ smallStatement {
   BreakStatement { kw<"break"> } |
   ContinueStatement { kw<"continue"> } |
   ReturnStatement { kw<"return"> expression? } |
-  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? }
+  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? } |
+  FieldNameTypeSpec { FieldIdentifier ":" type }
 }
 
 compoundStatement {
@@ -40,14 +41,14 @@ compoundStatement {
   WhileStatement { kw<"while"> expression Body } |
   ForStatement { kw<"for"> VariableName kw<"in"> expression Body } |
   FunctionDefinition |
-  StructTypeDefinition { kw<"type"> VariableName kw<"struct"> StructBody }
+  StructTypeDefinition { kw<"type"> VariableName kw<"struct"> Body }
 }
 
 commaSep<expr> { expr ("," expr)* }
 
 TypeIdentifier { identifier }
 
-FieldIdentifier { PropertyName }
+FieldIdentifier { identifier }
 
 TupleType { "(" type "," commaSep<type> ")" }
 
@@ -57,8 +58,6 @@ HashMapType { "{" type ":" type "}" }
 
 type[@isGroup=Type] { kw<"int"> | kw<"bool"> | kw<"str"> | kw<"float"> | TypeIdentifier | TupleType | ArrayType | HashMapType }
 
-FieldNameTypeSpec { FieldIdentifier ":" type }
-
 returnType { "->" type }
 
 RLambdaDefinition { kw<"lambda"> "(" commaSep<ArgName ":" type>? ")" returnType? Body }
@@ -66,12 +65,6 @@ RLambdaDefinition { kw<"lambda"> "(" commaSep<ArgName ":" type>? ")" returnType?
 FunctionDefinition {
   kw<"def"> VariableName "(" commaSep<ArgName ":" type>? ")" returnType? Body
 }
-
-StructBody { ":" newline indent StructStatement+ (dedent | eof) }
-
-FieldNameTypeSpecStatement { FieldNameTypeSpec (newline | eof) }
-
-StructStatement { FieldNameTypeSpecStatement | FunctionDefinition }
 
 expression[@isGroup=Expression] {
   BinaryExpression |
