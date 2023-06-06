@@ -88,8 +88,9 @@ const oneDarkTheme = /*@__PURE__*/ EditorView.theme(
     },
     ".cm-gutters": {
       backgroundColor: background,
-      color: stone,
+      // color: stone,
       border: "none",
+      color: "#606875",
     },
     ".cm-gutter.cm-lineNumbers": {
       // backgroundColor: "#24272e",
@@ -131,7 +132,7 @@ const oneDarkHighlightStyle = /*@__PURE__*/ HighlightStyle.define([
   { tag: tags.keyword, color: violet },
   {
     tag: [tags.name, tags.variableName],
-    color: "white",
+    color: "#dbdbdb",
   },
   {
     tag: [
