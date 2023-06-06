@@ -1,5 +1,5 @@
 // import { parser } from "@lezer/python";
-import { parser } from "./test";
+import { parser } from "./parser";
 import {
   // syntaxTree,
   LRLanguage,

@@ -6,24 +6,17 @@ import {
   blankLineStart,
   indent,
   dedent,
-  printKeyword,
   ParenthesizedExpression,
   TupleExpression,
-  ComprehensionExpression,
-  PatternArgList,
-  SequencePattern,
-  MappingPattern,
-  FormatString,
   ArrayExpression,
-  ArrayComprehensionExpression,
-  ArgList,
-  ParamList,
-  importList,
-  subscript,
   DictionaryExpression,
-  DictionaryComprehensionExpression,
   SetExpression,
-  SetComprehensionExpression,
+  ArgList,
+  ParenL,
+  BraceL,
+  BracketL,
+  /*
+  printKeyword,
   formatString1Content,
   formatString1Brace,
   formatString1End,
@@ -36,41 +29,51 @@ import {
   formatString2lContent,
   formatString2lBrace,
   formatString2lEnd,
-  ParenL,
-  BraceL,
-  BracketL,
-} from "./test.terms.js";
+  ParamList,
+  importList,
+  subscript,
+  DictionaryComprehensionExpression,
+  ArrayComprehensionExpression,
+  SetComprehensionExpression,
+  ComprehensionExpression,
+  PatternArgList,
+  SequencePattern,
+  MappingPattern,
+  FormatString,*/
+} from "./parser.terms.js";
 
 const newline = 10,
   carriageReturn = 13,
   space = 32,
   tab = 9,
-  hash = 35,
+  hash = 35;
+/*
   parenOpen = 40,
   dot = 46,
   braceOpen = 123,
   singleQuote = 39,
   doubleQuote = 34,
-  backslash = 92;
+  backslash = 92*/
 
 const bracketed = new Set([
   ParenthesizedExpression,
   TupleExpression,
+  SetExpression,
+  ArgList,
+  DictionaryExpression,
+  ArrayExpression,
+  /*
   ComprehensionExpression,
   importList,
-  ArgList,
-  ParamList,
-  ArrayExpression,
   ArrayComprehensionExpression,
   subscript,
-  SetExpression,
+  ParamList,
   SetComprehensionExpression,
   FormatString,
-  DictionaryExpression,
   DictionaryComprehensionExpression,
   SequencePattern,
   MappingPattern,
-  PatternArgList,
+  PatternArgList,*/
 ]);
 
 function isLineBreak(ch) {
@@ -171,6 +174,7 @@ export const trackIndent = new ContextTracker({
   },
 });
 
+/*
 export const legacyPrint = new ExternalTokenizer((input) => {
   for (let i = 0; i < 5; i++) {
     if (input.next != "print".charCodeAt(i)) return;
@@ -255,4 +259,4 @@ export const formatString2l = formatString(
   formatString2lContent,
   formatString2lBrace,
   formatString2lEnd
-);
+);*/
