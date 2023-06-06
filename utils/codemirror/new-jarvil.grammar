@@ -75,19 +75,13 @@ IfStatement {
 
 Body { ":" (simpleStatement | newline indent statement+ (dedent | eof)) }
 
-lambdaParam { VariableName (AssignOp{"="} test)? | "*" VariableName? | "**" VariableName }
-
-lambdaParams[@name="ParamList"] { (lambdaParam ("," lambdaParam)*)? }
-
 test {
  testInner |
- ConditionalExpression { testInner !cond kw<"if"> testInner kw<"else"> test } |
- LambdaExpression { kw<"lambda"> lambdaParams ":" test }
+ ConditionalExpression { testInner !cond kw<"if"> testInner kw<"else"> test }
 }
 
 testNoCond {
-  testInner |
-  LambdaExpression { kw<"lambda"> lambdaParams ":" testNoCond }
+  testInner
 }
 
 testNamed {
@@ -107,16 +101,11 @@ unaryTest[@name="UnaryExpression"] { kw<"not"> testInner }
 expression[@isGroup=Expression] {
   BinaryExpression |
   UnaryExpression { !prefix (ArithOp{"+" | "-"} | BitOp{"~"}) expression } |
-  AwaitExpression { kw<"await"> expression } |
   ParenthesizedExpression |
   TupleExpression |
-  ComprehensionExpression |
   ArrayExpression |
-  ArrayComprehensionExpression |
   DictionaryExpression |
-  DictionaryComprehensionExpression |
   SetExpression |
-  SetComprehensionExpression |
   CallExpression { expression !trail ArgList } |
   MemberExpression { expression !trail (subscript | "." PropertyName) } |
   VariableName |
@@ -135,29 +124,20 @@ subscript[@export] {
 ParenthesizedExpression { "(" (testNamed | "*" expression | YieldExpression) ")" }
 
 TupleExpression { "(" ((testNamed | "*" expression) (("," (testNamed | "*" expression))+ ","? | ","))? ")" }
-ComprehensionExpression { "(" (testNamed | "*" expression) compFor ")" }
 
 ArrayExpression { "[" commaSep<testNamed | "*" expression>? "]" }
-ArrayComprehensionExpression { "[" (testNamed | "*" expression) compFor "]" }
 
 DictionaryExpression { "{" commaSep<test ":" test | "**" expression>? "}" }
-DictionaryComprehensionExpression { "{" (test ":" test | "**" expression) compFor "}" }
 
 SetExpression { "{" commaSep<test | "*" expression> "}" }
-SetComprehensionExpression { "{" (test | "*" expression) compFor "}" }
 
 yield { kw<"yield"> (kw<"from"> test | commaSep<test | "*" expression>) }
 
 YieldExpression { yield }
 
 BinaryExpression {
-  expression !bitor BitOp{"|"} expression |
-  expression !xor BitOp{"^"} expression |
-  expression !bitand BitOp{"&"} expression |
-  expression !shift BitOp{"<<" | ">>"} expression |
   expression !plus ArithOp{"+" | "-"} expression |
-  expression !times ArithOp{"*" | "@" | "/" | "%" | "//"} expression |
-  expression !power ArithOp{"**"} expression
+  expression !times ArithOp{"*" | "@" | "/" | "%" | "//"} expression
 }
 
 ArgList { "(" commaSep<argument>? ")" }
