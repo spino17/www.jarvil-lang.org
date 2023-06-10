@@ -1,141 +1,20 @@
-// import { parser } from "@lezer/python";
 import { parser } from "./parser";
 import {
-  // syntaxTree,
   LRLanguage,
-  indentNodeProp,
   foldNodeProp,
+  indentService,
   LanguageSupport,
   TreeIndentContext,
 } from "@codemirror/language";
 import { Completion } from "@codemirror/autocomplete";
-// import { NodeWeakMap, IterMode } from "@lezer/common";
 import { SyntaxNode } from "@lezer/common";
 import {
   snippetCompletion,
   ifNotIn,
   completeFromList,
 } from "@codemirror/autocomplete";
-/*
-const cache = new NodeWeakMap();
-const ScopeNodes = new Set([
-  "Script",
-  "Body",
-  "FunctionDefinition",
-  "ClassDefinition",
-  "LambdaExpression",
-  "ForStatement",
-  "MatchClause",
-]);
-function defID(type) {
-  return (node, def, outer) => {
-    if (outer) return false;
-    let id = node.node.getChild("VariableName");
-    if (id) def(id, type);
-    return true;
-  };
-}
-const gatherCompletions = {
-  FunctionDefinition: defID("function"),
-  ClassDefinition: defID("class"),
-  ForStatement(node, def, outer) {
-    if (outer)
-      for (let child = node.node.firstChild; child; child = child.nextSibling) {
-        if (child.name == "VariableName") def(child, "variable");
-        else if (child.name == "in") break;
-      }
-  },
-  ImportStatement(_node, def) {
-    var _a, _b;
-    let { node } = _node;
-    let isFrom =
-      ((_a = node.firstChild) === null || _a === void 0 ? void 0 : _a.name) ==
-      "from";
-    for (let ch = node.getChild("import"); ch; ch = ch.nextSibling) {
-      if (
-        ch.name == "VariableName" &&
-        ((_b = ch.nextSibling) === null || _b === void 0 ? void 0 : _b.name) !=
-          "as"
-      )
-        def(ch, isFrom ? "variable" : "namespace");
-    }
-  },
-  AssignStatement(node, def) {
-    for (let child = node.node.firstChild; child; child = child.nextSibling) {
-      if (child.name == "VariableName") def(child, "variable");
-      else if (child.name == ":" || child.name == "AssignOp") break;
-    }
-  },
-  ParamList(node, def) {
-    for (
-      let prev = null, child = node.node.firstChild;
-      child;
-      child = child.nextSibling
-    ) {
-      if (
-        child.name == "VariableName" &&
-        (!prev || !/\*|AssignOp/.test(prev.name))
-      )
-        def(child, "variable");
-      prev = child;
-    }
-  },
-  CapturePattern: defID("variable"),
-  AsPattern: defID("variable"),
-  __proto__: null,
-};
-*/
-/*
-function getScope(doc, node) {
-  let cached = cache.get(node);
-  if (cached) return cached;
-  let completions = [],
-    top = true;
-  function def(node, type) {
-    let name = doc.sliceString(node.from, node.to);
-    completions.push({ label: name, type });
-  }
-  node.cursor(IterMode.IncludeAnonymous).iterate((node) => {
-    if (node.name) {
-      let gather = gatherCompletions[node.name];
-      if (
-        (gather && gather(node, def, top)) ||
-        (!top && ScopeNodes.has(node.name))
-      )
-        return false;
-      top = false;
-    } else if (node.to - node.from > 8192) {
-      // Allow caching for bigger internal nodes
-      for (let c of getScope(doc, node.node)) completions.push(c);
-      return false;
-    }
-  });
-  cache.set(node, completions);
-  return completions;
-}*/
-// const Identifier = /^[\w\xa1-\uffff][\w\d\xa1-\uffff]*$/;
+
 const dontComplete = ["String", "LineComment", "BlockComment", "PropertyName"];
-/*
-function localCompletionSource(context) {
-  let inner = syntaxTree(context.state).resolveInner(context.pos, -1);
-  if (dontComplete.indexOf(inner.name) > -1) return null;
-  let isWord =
-    inner.name == "VariableName" ||
-    (inner.to - inner.from < 20 &&
-      Identifier.test(context.state.sliceDoc(inner.from, inner.to)));
-  if (!isWord && !context.explicit) return null;
-  let options = [];
-  for (let pos = inner; pos; pos = pos.parent) {
-    if (ScopeNodes.has(pos.name))
-      options = options.concat(getScope(context.state.doc, pos));
-  }
-  return {
-    options,
-    from: isWord ? inner.from : context.pos,
-    validFor: Identifier,
-  };
-}
-*/
 const globals: Completion[] = ["False", "True"]
   .map((n) => ({ label: n, type: "constant" }))
   .concat(
@@ -218,40 +97,6 @@ const jarvilLanguage = LRLanguage.define({
   name: "jarvil",
   parser: parser.configure({
     props: [
-      indentNodeProp.add({
-        Body: (context) => {
-          var _a;
-          return (_a = indentBody(context, context.node)) !== null &&
-            _a !== void 0
-            ? _a
-            : context.continue();
-        },
-        IfStatement: (cx) =>
-          /^\s*(else:|elif )/.test(cx.textAfter)
-            ? cx.baseIndent
-            : cx.continue(),
-        "String BlockComment": () => null,
-        Script: (context) => {
-          if (
-            // @ts-ignore
-            context.pos + /\s*/.exec(context.textAfter)[0].length >=
-            context.node.to
-          ) {
-            let endBody = null;
-            for (let cur = context.node, to = cur.to; ; ) {
-              // @ts-ignore
-              cur = cur.lastChild;
-              if (!cur || cur.to != to) break;
-              if (cur.type.name == "Body") endBody = cur;
-            }
-            if (endBody) {
-              let bodyIndent = indentBody(context, endBody);
-              if (bodyIndent != null) return bodyIndent;
-            }
-          }
-          return context.continue();
-        },
-      }),
       foldNodeProp.add({
         BlockComment: (node, state) => ({
           from: node.from + 2,
@@ -265,7 +110,7 @@ const jarvilLanguage = LRLanguage.define({
       brackets: ["(", "[", "{", "'", '"'],
     },
     commentTokens: { block: { open: "/*", close: "*/" } },
-    indentOnInput: /^\s*([\}\]\)]|else:|elif )$/,
+    // indentOnInput: /^\s*([\}\]\)]|else:|elif )$/,
   },
 });
 /**

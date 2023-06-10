@@ -10,6 +10,7 @@ export type Theme = {
   defaultFontColor: string;
 };
 
+// This is general theme for the whole website
 export const themeData: Theme = {
   backgroundColor: "#161717",
   primaryFontColor: "",
@@ -17,6 +18,7 @@ export const themeData: Theme = {
   defaultFontColor: "white",
 };
 
+// This is theme for the editor
 // NOTE: Below Theme extension is copied from `@codemirror/theme-one-dark` with minor custom modification to styling
 // Using https://github.com/one-dark/vscode-one-dark-theme/ as reference for the colors
 const chalky = "#e5c07b",

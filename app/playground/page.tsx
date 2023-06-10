@@ -7,21 +7,12 @@ import {
 } from "@/hooks/playground";
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
-import localFont from "next/font/local";
 import { LocalThemeContext } from "@/components/theme";
-import "./globals.css";
-import hljs from "highlight.js/lib/core";
-import "highlight.js/styles/atom-one-dark.css";
-import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
-import { jarvil } from "../utils/codemirror/core";
+import "../globals.css";
+import CodeMirror from "@uiw/react-codemirror";
+import { jarvil } from "@/utils/codemirror/core";
 import { oneDark } from "@/utils/theme";
 import { runParser } from "@/utils/codemirror/analysis";
-
-const consolasFont = localFont({
-  src: "../public/Consolas.ttf",
-  display: "swap",
-  weight: "300",
-});
 
 const CodeEditorGlobalWrapper = styled.div`
   text-align: center;
@@ -106,20 +97,7 @@ const CodeOutputAreaGlobalWrapper = styled.div`
   margin-right: 20px;
 `;
 
-function highlightCodeWithLineNumbers(code: string): React.ReactNode {
-  let x = hljs
-    .highlight(code, {
-      language: "python",
-      ignoreIllegals: true,
-    })
-    .value.split("\n");
-  x.push("");
-  return x
-    .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
-    .join("\n");
-}
-
-export default function Home() {
+export default function playground() {
   const [inputText, setInputText] = useState<string>(
     'def main():\n    # start writing your code here\n    print("Hello, World")'
   );
@@ -129,28 +107,6 @@ export default function Home() {
     pyodide
   );
   const { theme } = useContext(LocalThemeContext);
-  const additionalEditorClass = "editor";
-  const inheritClass = consolasFont.className;
-  const combinedClasses = `${inheritClass} ${additionalEditorClass}`;
-  // hljs.registerLanguage("python", python);
-
-  /*
-  <Editor
-                    value={inputText}
-                    onValueChange={(code) => setInputText(code)}
-                    highlight={highlightCodeWithLineNumbers}
-                    padding={{
-                      top: 20,
-                      left: 60,
-                      right: 20,
-                      bottom: 20,
-                    }}
-                    textareaId="codeArea"
-                    className={combinedClasses}
-                    insertSpaces={true}
-                    tabSize={4}
-                  />*/
-
   return (
     <BootstrapCenterWrapper theme={theme}>
       <div>
@@ -178,7 +134,6 @@ export default function Home() {
                   value={inputText}
                   height="600px"
                   extensions={[jarvil()]}
-                  // extensions={[py()]}
                   onChange={(code) => setInputText(code)}
                   theme={oneDark}
                   className="CodeMirror"
