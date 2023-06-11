@@ -5,6 +5,7 @@ import { EditorView } from "codemirror";
 
 export type Theme = {
   backgroundColor: string;
+  lighterBackgroundColor: string;
   primaryFontColor: string;
   secondaryFontColor: string;
   defaultFontColor: string;
@@ -14,6 +15,7 @@ export type Theme = {
 // This is general theme for the whole website
 export const themeData: Theme = {
   backgroundColor: "#161717",
+  lighterBackgroundColor: "#252626",
   primaryFontColor: "#20a0db",
   secondaryFontColor: "black",
   defaultFontColor: "white",

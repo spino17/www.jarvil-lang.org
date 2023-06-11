@@ -72,7 +72,7 @@ const GetStartedButtonDiv = styled.div`
 
 const WhyJarvilGlobalDiv = styled.div`
   background-color: white;
-  height: 700px;
+  height: 600px;
   padding-top: 50px;
 `;
 
@@ -164,7 +164,7 @@ export default function Home() {
               </WhyJarvilContentHeadingDiv>
               <WhyJarvilContentTextDiv>
                 {
-                  "Jarvil adds modern features like lambda support, structural-typing, error-tolerant lossless parsing, distinct namespaces, conditional and loop blocks scoping and much more."
+                  "Jarvil adds modern features like lambda support, structural-typing, error-tolerant lossless parsing, distinct namespaces, conditional and loop blocks scoping, beautiful error diagnostics and much more."
                 }
               </WhyJarvilContentTextDiv>
             </WhyJarvilContentDiv>
