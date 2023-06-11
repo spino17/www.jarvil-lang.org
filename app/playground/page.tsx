@@ -97,7 +97,7 @@ const CodeOutputAreaGlobalWrapper = styled.div`
   margin-right: 20px;
 `;
 
-export default function playground() {
+export default function Playground() {
   const [inputText, setInputText] = useState<string>(
     'def main():\n    # start writing your code here\n    print("Hello, World")'
   );

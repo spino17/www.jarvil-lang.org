@@ -25,7 +25,6 @@ const GlobalTopBarStyle = styled.div`
 `;
 
 const JarvilLogoAndNameDiv = styled.div`
-  width: 15%;
   padding-left: 10px;
   padding-right: 10px;
   font-size: 30px;
@@ -51,11 +50,14 @@ export function TopBar() {
   const { theme } = useContext(LocalThemeContext);
   return (
     <GlobalTopBarStyle theme={theme}>
-      <JarvilLogoAndNameDiv className={consolasFont.className}>
-        <Link href="/" style={{ textDecoration: "none", color: "white" }}>
+      <Link
+        href="/"
+        style={{ textDecoration: "none", color: "white", width: "15%" }}
+      >
+        <JarvilLogoAndNameDiv className={consolasFont.className}>
           {"Jarvil"}
-        </Link>
-      </JarvilLogoAndNameDiv>
+        </JarvilLogoAndNameDiv>
+      </Link>
       {TOP_BAR_OPTIONS.map((option) => {
         return (
           <Link
