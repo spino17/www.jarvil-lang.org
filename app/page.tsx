@@ -153,62 +153,7 @@ export default function Home() {
 
   return (
     <BootstrapCenterWrapper theme={theme}>
-      <div>
-        <CodeEditorGlobalWrapper theme={theme}>
-          <FlexDisplay>
-            <CodeEditorAreaGlobalWrapper>
-              <EditorConfigBarWrapper>
-                {isInitialized ? (
-                  <StyledRunButton
-                    onClick={() => {
-                      runParser(inputText);
-                      setIsOutputLoading(true);
-                    }}
-                  >
-                    {"Run"}
-                  </StyledRunButton>
-                ) : (
-                  <StyledInitializationText>
-                    {"Initializing programming environment ..."}
-                  </StyledInitializationText>
-                )}
-              </EditorConfigBarWrapper>
-              <CodeAreaWrapper>
-                <CodeMirror
-                  value={inputText}
-                  height="600px"
-                  extensions={[jarvil()]}
-                  // extensions={[py()]}
-                  onChange={(code) => setInputText(code)}
-                  theme={oneDark}
-                  className="CodeMirror"
-                  basicSetup={{
-                    tabSize: 4,
-                  }}
-                />
-              </CodeAreaWrapper>
-            </CodeEditorAreaGlobalWrapper>
-            <CodeOutputAreaGlobalWrapper>
-              <EditorOutputBarWrapper>
-                <StyledOutputText>{"OUTPUT"}</StyledOutputText>
-              </EditorOutputBarWrapper>
-              <CodeOuputAreaWrapper theme={theme}>
-                {isOutputLoading ? (
-                  <div>{"Running the code ...\n"}</div>
-                ) : output ? (
-                  // TODO - use output.kind to add extra information on the output
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: output.msg,
-                    }}
-                    className="output"
-                  />
-                ) : null}
-              </CodeOuputAreaWrapper>
-            </CodeOutputAreaGlobalWrapper>
-          </FlexDisplay>
-        </CodeEditorGlobalWrapper>
-      </div>
+      <div>{"Home page - WIP"}</div>
     </BootstrapCenterWrapper>
   );
 }

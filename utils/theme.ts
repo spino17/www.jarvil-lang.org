@@ -8,14 +8,16 @@ export type Theme = {
   primaryFontColor: string;
   secondaryFontColor: string;
   defaultFontColor: string;
+  hoverColor: string;
 };
 
 // This is general theme for the whole website
 export const themeData: Theme = {
   backgroundColor: "#161717",
-  primaryFontColor: "",
+  primaryFontColor: "#20a0db",
   secondaryFontColor: "black",
   defaultFontColor: "white",
+  hoverColor: "#e6e6e6",
 };
 
 // This is theme for the editor

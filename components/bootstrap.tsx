@@ -22,10 +22,10 @@ export const noPaddingMarginStyle = {
 
 export function BootstrapWrapper(props: { children: JSX.Element }) {
   return (
-    <Container fluid style={{ paddingLeft: 0, paddingRight: 0 }}>
+    <Container fluid style={noPaddingMarginStyle}>
       <ContainerWrapper>
-        <Row>
-          <Col>{props.children}</Col>
+        <Row style={noPaddingMarginStyle}>
+          <Col style={noPaddingMarginStyle}>{props.children}</Col>
         </Row>
       </ContainerWrapper>
     </Container>
