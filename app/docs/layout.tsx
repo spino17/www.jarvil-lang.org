@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  BootstrapCenterWrapper,
-  BootstrapWrapper,
-} from "@/components/bootstrap";
+import { BootstrapWrapper } from "@/components/bootstrap";
 import { LocalThemeContext } from "@/components/theme";
 import React, { useContext } from "react";
 import styled, { ThemeContext } from "styled-components";

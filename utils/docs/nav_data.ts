@@ -13,7 +13,7 @@ export const NAV_BAR_STRUCTURE: DocsNavBarEntryShape[] = [
   {
     name: "Everyday Types",
     _sub_data: null,
-    route: "/docs/",
+    route: "/docs/everyday-types",
   },
   {
     name: "User-defined Types",
@@ -28,7 +28,7 @@ export const NAV_BAR_STRUCTURE: DocsNavBarEntryShape[] = [
   {
     name: "Scoping",
     _sub_data: null,
-    route: "/docs/user-defined-types",
+    route: "/docs/scoping",
   },
   {
     name: "Lambdas",
