@@ -24,10 +24,12 @@ export const themeData: Theme = {
 
 export type DocsThemeShape = {
   headingFontSize: number;
+  fontSize: number;
 };
 
 export const docsThemeData: DocsThemeShape = {
   headingFontSize: 50,
+  fontSize: 16,
 };
 
 // This is theme for the editor

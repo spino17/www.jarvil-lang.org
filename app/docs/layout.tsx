@@ -1,6 +1,9 @@
 "use client";
 
-import { BootstrapCenterWrapper } from "@/components/bootstrap";
+import {
+  BootstrapCenterWrapper,
+  BootstrapWrapper,
+} from "@/components/bootstrap";
 import { LocalThemeContext } from "@/components/theme";
 import React, { useContext } from "react";
 import styled, { ThemeContext } from "styled-components";
@@ -35,6 +38,9 @@ const FlexDisplayDiv = styled.div`
 
 const PageGlobalStyledDiv = styled.div`
   padding: 20px;
+  width: 82%;
+  overflow: auto;
+  height: 90vh;
 `;
 
 export default function DocsLayout({
@@ -44,7 +50,7 @@ export default function DocsLayout({
 }) {
   const { theme } = useContext(LocalThemeContext);
   return (
-    <BootstrapCenterWrapper theme={theme}>
+    <BootstrapWrapper theme={theme}>
       <FlexDisplayDiv>
         <NavBar />
         <PageGlobalStyledDiv>
@@ -53,6 +59,6 @@ export default function DocsLayout({
           </DocsThemeProvider>
         </PageGlobalStyledDiv>
       </FlexDisplayDiv>
-    </BootstrapCenterWrapper>
+    </BootstrapWrapper>
   );
 }
