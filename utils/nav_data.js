@@ -11,4 +11,8 @@ export const TOP_BAR_OPTIONS = [
     title: "Playground",
     route: "/playground",
   },
+  {
+    title: "Github",
+    route: "https://github.com/spino17/jarvil",
+  },
 ];

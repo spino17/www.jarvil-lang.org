@@ -7,6 +7,7 @@ import { Theme } from "@/utils/theme";
 const ContainerWrapper = styled.div`
   background-color: ${(props) => props.theme.backgroundColor};
   height: 100vh;
+  overflow-y: scroll;
 `;
 
 export const noPaddingMarginStyle = {

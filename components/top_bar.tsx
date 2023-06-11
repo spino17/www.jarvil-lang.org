@@ -43,7 +43,7 @@ const TopBarOptionDiv = styled.div`
     color: ${(props) => props.theme.hoverColor};
   }
   font-weight: 400;
-  font-size: 15px;
+  font-size: 16px;
 `;
 
 export function TopBar() {
