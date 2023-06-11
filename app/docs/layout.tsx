@@ -2,12 +2,39 @@
 
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
 import { LocalThemeContext } from "@/components/theme";
-import { useContext } from "react";
-import styled from "styled-components";
+import React, { useContext } from "react";
+import styled, { ThemeContext } from "styled-components";
 import NavBar from "@/components/docs/nav_bar";
+import { DocsThemeShape, docsThemeData } from "@/utils/theme";
+
+type ThemeContextType = {
+  theme: DocsThemeShape;
+};
+
+export const DocsThemeContext = React.createContext<ThemeContextType>({
+  theme: docsThemeData,
+});
+
+type ThemeProviderProps = {
+  theme: DocsThemeShape;
+  children: React.ReactNode;
+};
+
+export const DocsThemeProvider: React.FC<ThemeProviderProps> = ({
+  theme,
+  children,
+}) => {
+  return (
+    <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
+  );
+};
 
 const FlexDisplayDiv = styled.div`
   display: flex;
+`;
+
+const PageGlobalStyledDiv = styled.div`
+  padding: 20px;
 `;
 
 export default function DocsLayout({
@@ -20,7 +47,11 @@ export default function DocsLayout({
     <BootstrapCenterWrapper theme={theme}>
       <FlexDisplayDiv>
         <NavBar />
-        {children}
+        <PageGlobalStyledDiv>
+          <DocsThemeProvider theme={docsThemeData}>
+            {children}
+          </DocsThemeProvider>
+        </PageGlobalStyledDiv>
       </FlexDisplayDiv>
     </BootstrapCenterWrapper>
   );

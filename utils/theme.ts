@@ -22,6 +22,14 @@ export const themeData: Theme = {
   hoverColor: "#e6e6e6",
 };
 
+export type DocsThemeShape = {
+  headingFontSize: number;
+};
+
+export const docsThemeData: DocsThemeShape = {
+  headingFontSize: 50,
+};
+
 // This is theme for the editor
 // NOTE: Below Theme extension is copied from `@codemirror/theme-one-dark` with minor custom modification to styling
 // Using https://github.com/one-dark/vscode-one-dark-theme/ as reference for the colors
