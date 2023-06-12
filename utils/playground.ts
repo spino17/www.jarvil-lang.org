@@ -1,5 +1,10 @@
-import { loadPyodide } from "@/public";
 import { compile } from "../public/pkg";
+import Convert from "ansi-to-html";
+
+export interface JarvilCodeExecutionResult {
+  msg: string;
+  kind: string;
+}
 
 function getPythonCodeTemplate(code: string): string {
   // This template wraps the code in order to redirect stdout for displaying it
@@ -31,30 +36,43 @@ run_code(` +
 export async function runJarvilCode(
   inputCode: string,
   pyodide: any
-): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
+): Promise<JarvilCodeExecutionResult> {
+  return new Promise<JarvilCodeExecutionResult>((resolve, reject) => {
     try {
-      const pyCode = compile(inputCode);
+      const pyCode = compile(inputCode); // do static checks and generate python code using Jarvil compiler
       pyodide
-        .runPythonAsync(getPythonCodeTemplate(pyCode))
+        .runPythonAsync(getPythonCodeTemplate(pyCode)) // run the generated code using Pyodide compiler
         .then((result: string) => {
           // `stdout`
-          resolve(result);
+          resolve({
+            msg: result.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+            kind: "success",
+          });
         })
         .catch((error: Error) => {
           // Python runtime error
-          resolve(error.message);
+          resolve({
+            msg: error.message.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+            kind: "python_runtime_error",
+          });
         });
     } catch (error) {
-      console.log(JSON.stringify(error));
-      console.log(error);
       // Jarvil static type-checking error
       if (typeof error == "string") {
-        resolve(error);
+        var convert = new Convert();
+        var formattedError = error.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        formattedError = convert.toHtml(formattedError);
+        resolve({
+          msg: formattedError,
+          kind: "jarvil_static_type_check_error",
+        });
       } else {
-        resolve(
-          "Something went wrong! Please attach the code and raise an issue on `https://github.com/spino17/jarvil/issues`"
-        );
+        let msg =
+          "Something went wrong! Please attach the code and raise an issue on `https://github.com/spino17/jarvil/issues`";
+        resolve({
+          msg: msg,
+          kind: "jarvil_static_other_error",
+        });
       }
     }
   });

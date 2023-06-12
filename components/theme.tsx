@@ -1,7 +1,7 @@
 "use client";
 
 import { Theme, themeData } from "@/utils/theme";
-import React, { useState } from "react";
+import React from "react";
 import { ThemeContext } from "styled-components";
 
 type ThemeContextType = {

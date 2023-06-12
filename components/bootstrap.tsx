@@ -7,6 +7,7 @@ import { Theme } from "@/utils/theme";
 const ContainerWrapper = styled.div`
   background-color: ${(props) => props.theme.backgroundColor};
   height: 100vh;
+  overflow-y: scroll;
 `;
 
 export const noPaddingMarginStyle = {
@@ -20,12 +21,15 @@ export const noPaddingMarginStyle = {
   marginBottom: 0,
 };
 
-export function BootstrapWrapper(props: { children: JSX.Element }) {
+export function BootstrapWrapper(props: {
+  theme: Theme;
+  children: React.ReactNode;
+}) {
   return (
-    <Container fluid style={{ paddingLeft: 0, paddingRight: 0 }}>
-      <ContainerWrapper>
-        <Row>
-          <Col>{props.children}</Col>
+    <Container fluid style={noPaddingMarginStyle}>
+      <ContainerWrapper theme={props.theme}>
+        <Row style={noPaddingMarginStyle}>
+          <Col style={noPaddingMarginStyle}>{props.children}</Col>
         </Row>
       </ContainerWrapper>
     </Container>
@@ -34,7 +38,7 @@ export function BootstrapWrapper(props: { children: JSX.Element }) {
 
 export function BootstrapCenterWrapper(props: {
   theme: Theme;
-  children: JSX.Element;
+  children: React.ReactNode;
 }) {
   return (
     <Container fluid style={noPaddingMarginStyle}>

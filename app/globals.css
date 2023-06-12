@@ -5,3 +5,40 @@ body {
   padding: 0;
   margin: 0;
 }
+
+.CodeMirror {
+  font-size: 14px;
+}
+
+.editor {
+  font-family: consolas;
+  font-weight: 300;
+  font-size: 15px;
+  resize: none;
+  min-height: 600px;
+  background-color: #1a1c21;
+  counter-reset: line;
+}
+
+.editor pre {
+  padding-left: 60px;
+}
+
+.editor #codeArea {
+  outline: 0;
+  padding: 60px;
+}
+
+.editor .editorLineNumber {
+  position: absolute;
+  left: 0px;
+  color: #878686;
+  text-align: right;
+  width: 40px;
+  font-weight: 100;
+}
+
+.output {
+  white-space: pre-wrap;
+  font-family: "Courier New", Courier, monospace;
+}

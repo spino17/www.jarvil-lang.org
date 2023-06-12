@@ -1,151 +1,176 @@
 "use client"; // This is a client component 👈🏽
 
-import { useContext, useState } from "react";
-import {
-  useInitProgrammingEnviroment,
-  useRunJarvilCode,
-} from "@/hooks/playground";
+import { useContext } from "react";
 import styled from "styled-components";
 import { BootstrapCenterWrapper } from "@/components/bootstrap";
-import Editor from "react-simple-code-editor";
-import "prismjs/themes/prism.css"; //Example style, you can use another
-import Prism from "prismjs";
 import localFont from "next/font/local";
 import { LocalThemeContext } from "@/components/theme";
 
 const consolasFont = localFont({
-  src: "../public/Consolas.ttf",
+  src: "../public/Flux-Regular.otf",
   display: "swap",
   weight: "300",
 });
 
-// event-handlers
-const handleCodeAreaChange = (setInputText: (text: string) => void) => {
-  const handler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputText(event.target.value);
-  };
-  return handler;
-};
-
-const handleKeyPress = (setInputText: (text: string) => void) => {
-  // TODO - add logic for auto-indentation
-  const handler = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default behavior of the Enter key
-
-      const textarea = event.target as HTMLTextAreaElement;
-      const { selectionStart, selectionEnd } = textarea;
-      const currentText = textarea.value;
-
-      // Insert indentation before the current cursor position
-      const indentedText =
-        currentText.slice(0, selectionStart) +
-        "\n    " +
-        currentText.slice(selectionStart);
-      setInputText(indentedText);
-
-      // Move the cursor to the correct position after indentation
-      const updatedCursorPos = selectionStart + 2;
-      textarea.setSelectionRange(updatedCursorPos, updatedCursorPos);
-    }
-  };
-
-  return handler;
-};
-
-const StyledCodeEditorArea = styled.textarea`
-  font-size: 15px;
-  padding: 10px;
-  width: 50%;
-  resize: none;
-  background-color: #0a0a0a;
-  color: white;
-  &:focus {
-    outline: none;
-  }
-`;
-
-const CodeEditorGlobalStyle = styled.div`
-  text-align: center;
+const FlexDisplay = styled.div`
   display: flex;
   align-items: center;
+  padding: 20px;
+`;
+
+const GlobalOpeningContentDiv = styled.div`
+  height: 300px;
+  width: 60%;
+  margin-left: 70px;
+  margin-top: 100px;
+`;
+
+const GlobalGetStartedDiv = styled.div`
+  height: 300px;
+  display: flex;
   justify-content: center;
-  flex-direction: column;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  width: 40%;
+  margin-top: 70px;
+`;
+
+const JarvilNameDiv = styled.div`
+  font-size: 150px;
+  font-weight: 1000;
+  padding: 20px;
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
   color: ${(props) => props.theme.defaultFontColor};
 `;
 
-const StyledEditorOuputArea = styled.div`
-  text-align: left;
+const DescriptionDiv = styled.div`
+  font-size: 30px;
+  color: ${(props) => props.theme.primaryFontColor};
+  padding: 20px;
+  padding-top: 50px;
+  padding-right: 50px;
+  line-height: 40px;
+  font-weight: 200;
+`;
+
+const GetStartedButtonDiv = styled.div`
+  font-size: 20px;
+  border-radius: 2px;
+  background-color: #fddd00;
   width: 50%;
-  border: red;
-  height: 200px;
-  background-color: yellow;
+  padding: 40px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  font-weight: 350;
+  height: fit-content;
+  text-align: center;
+  &:hover {
+    cursor: pointer;
+    background-color: #f5d500;
+  }
+`;
+
+const WhyJarvilGlobalDiv = styled.div`
+  background-color: white;
+  height: 600px;
+  padding-top: 50px;
+`;
+
+const WhyJarvilContentGlobalDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  padding-top: 40px;
+`;
+
+const WhyJarvilTextDiv = styled.div`
+  text-align: center;
+  padding: 30px;
+  color: black;
+  font-size: 50px;
+  font-weight: 200;
+`;
+
+const WhyJarvilContentDiv = styled.div`
   padding: 10px;
-  color: ${(props) => props.theme.secondaryFontColor};
+  margin: 10px;
+  height: 300px;
+  width: 30%;
+`;
+
+const WhyJarvilContentHeadingDiv = styled.div`
+  text-align: center;
+  font-size: 25px;
+  font-weight: 400;
+`;
+
+const WhyJarvilContentTextDiv = styled.div`
+  padding: 30px;
+  font-size: 20px;
+  line-height: 25px;
+  font-weight: 300;
 `;
 
 export default function Home() {
-  const [inputText, setInputText] = useState<string>(
-    'def main():\n    // start writing your code here\n    print("Hello, World")'
-  );
-  const { isInitialized, pyodide } = useInitProgrammingEnviroment();
-  const { isOutputLoading, setIsOutputLoading, output } = useRunJarvilCode(
-    inputText,
-    pyodide
-  );
   const { theme } = useContext(LocalThemeContext);
   return (
     <BootstrapCenterWrapper theme={theme}>
-      {!isInitialized ? (
-        <CodeEditorGlobalStyle theme={theme}>
-          {"Initializing programming environment ..."}
-        </CodeEditorGlobalStyle>
-      ) : (
-        <div>
-          <CodeEditorGlobalStyle theme={theme}>
-            <Editor
-              value={inputText}
-              onValueChange={(code) => setInputText(code)}
-              highlight={(code) =>
-                Prism.highlight(code, Prism.languages.javascript, "js")
+      <div>
+        <FlexDisplay>
+          <GlobalOpeningContentDiv>
+            <JarvilNameDiv className={consolasFont.className} theme={theme}>
+              {"Jarvil"}
+            </JarvilNameDiv>
+            <DescriptionDiv theme={theme}>
+              {
+                "A programming language with syntactic resemblance to Python along with static type checking system."
               }
-              padding={10}
-              style={{
-                fontFamily: '"Consolas"',
-                fontSize: 12,
-              }}
-            />
-            <StyledCodeEditorArea
-              value={inputText}
-              onChange={handleCodeAreaChange(setInputText)}
-              // onKeyDown={handleKeyPress(setInputText)}
-              rows={20}
-              cols={50}
-              className={consolasFont.className}
-              theme={theme}
-            />
-            <div
-              onClick={() => {
-                setIsOutputLoading(true);
-              }}
-            >
-              Run
-            </div>
-            <StyledEditorOuputArea
-              style={{ whiteSpace: "pre-wrap" }}
-              theme={theme}
-            >
-              {isOutputLoading ? (
-                <div>{"running the code ...\n"}</div>
-              ) : (
-                <div>{output}</div>
-              )}
-            </StyledEditorOuputArea>
-          </CodeEditorGlobalStyle>
-        </div>
-      )}
+            </DescriptionDiv>
+          </GlobalOpeningContentDiv>
+          <GlobalGetStartedDiv>
+            <GetStartedButtonDiv theme={theme}>
+              {"Get Started"}
+            </GetStartedButtonDiv>
+          </GlobalGetStartedDiv>
+        </FlexDisplay>
+        <WhyJarvilGlobalDiv>
+          <WhyJarvilTextDiv>
+            Why <span className={consolasFont.className}>Jarvil</span> ?
+          </WhyJarvilTextDiv>
+          <WhyJarvilContentGlobalDiv>
+            <WhyJarvilContentDiv>
+              <WhyJarvilContentHeadingDiv>
+                {"Type Checking"}
+              </WhyJarvilContentHeadingDiv>
+              <WhyJarvilContentTextDiv>
+                {
+                  "Jarvil comes with a static type-checking system which catch errors at compile time rather than runtime! To achieve this Jarvil provides syntax for type annotations. It can automatically infer types wherever possible."
+                }
+              </WhyJarvilContentTextDiv>
+            </WhyJarvilContentDiv>
+            <WhyJarvilContentDiv>
+              <WhyJarvilContentHeadingDiv>
+                {"Transpiles to Python"}
+              </WhyJarvilContentHeadingDiv>
+              <WhyJarvilContentTextDiv>
+                {
+                  "Jarvil transpiles to clean formatted Python code which you can trust does not have any type related bugs. This also lets you gradually integrate jarvil in your existing Python projects."
+                }
+              </WhyJarvilContentTextDiv>
+            </WhyJarvilContentDiv>
+            <WhyJarvilContentDiv>
+              <WhyJarvilContentHeadingDiv>
+                {"Modern features"}
+              </WhyJarvilContentHeadingDiv>
+              <WhyJarvilContentTextDiv>
+                {
+                  "Jarvil adds modern features like lambda support, structural-typing, error-tolerant lossless parsing, distinct namespaces, conditional and loop blocks scoping, beautiful error diagnostics and much more."
+                }
+              </WhyJarvilContentTextDiv>
+            </WhyJarvilContentDiv>
+          </WhyJarvilContentGlobalDiv>
+        </WhyJarvilGlobalDiv>
+      </div>
     </BootstrapCenterWrapper>
   );
 }

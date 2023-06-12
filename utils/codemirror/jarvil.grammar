@@ -1,0 +1,219 @@
+@precedence {
+  trail,
+  times @left,
+  plus @left,
+  compare @left,
+  and @left,
+  or @left
+}
+
+@top Script { statement+ }
+
+@skip { space | newlineBracketed | LineComment | blankLine | BlockComment }
+
+@local tokens {
+  blockCommentEnd { "*/" }
+  blockCommentNewline { "\n" }
+  @else blockCommentContent
+}
+
+@local tokens {
+  stringSingleEnd { "'" }
+  stringSingleNewline { "\n" }
+  @else stringSingleContent
+}
+
+@local tokens {
+  stringDoubleEnd { '"' }
+  stringDoubleNewline { "\n" }
+  @else stringDoubleContent
+}
+
+Body { ":" newline indent statement+ (dedent | eof) }
+
+statement[@isGroup=Statement] { simpleStatement | compoundStatement }
+
+simpleStatement {
+  smallStatement (newline | eof)
+}
+
+smallStatement {
+  AssignStatement { expression "=" expression } |
+  ExpressionStatement { expression } |
+  BreakStatement { kw<"break"> } |
+  ContinueStatement { kw<"continue"> } |
+  ReturnStatement { kw<"return"> expression? } |
+  LambdaTypeDefinitionStatement { kw<"type"> VariableName kw<"lambda"> "=" "(" commaSep<type>? ")" ( "->" type )? } |
+  FieldNameTypeSpec { FieldIdentifier ":" type }
+}
+
+compoundStatement {
+  VariableDeclarationStatement { kw<"let"> VariableName "=" (RLambdaDefinition | expression (newline | eof)) } |
+  IfStatement |
+  WhileStatement { kw<"while"> expression Body } |
+  ForStatement { kw<"for"> VariableName kw<"in"> expression Body } |
+  FunctionDefinition |
+  StructTypeDefinition { kw<"type"> VariableName kw<"struct"> Body }
+}
+
+commaSep<expr> { expr ("," expr)* }
+
+TypeIdentifier { identifier }
+
+FieldIdentifier { identifier }
+
+TupleType { "(" type "," commaSep<type> ")" }
+
+ArrayType { "[" type "]" }
+
+HashMapType { "{" type ":" type "}" }
+
+type[@isGroup=Type] { kw<"int"> | kw<"bool"> | kw<"str"> | kw<"float"> | TypeIdentifier | TupleType | ArrayType | HashMapType }
+
+returnType { "->" type }
+
+RLambdaDefinition { kw<"lambda"> "(" commaSep<ArgName ":" type>? ")" returnType? Body }
+
+FunctionDefinition {
+  kw<"def"> VariableName "(" commaSep<ArgName ":" type>? ")" returnType? Body
+}
+
+expression[@isGroup=Expression] {
+  BinaryExpression |
+  UnaryExpression
+}
+
+UnaryExpression { OnlyUnaryExpression | AtomicExpression }
+
+BinaryExpression {
+  expression !plus ArithPlusOp expression |
+  expression !times ArithTimesOp expression |
+  expression !compare CompareOp expression |
+  expression !or kw<"or"> expression |
+  expression !and kw<"and"> expression
+}
+
+OnlyUnaryExpression { ("+" | "-" | kw<"not">) UnaryExpression }
+
+AtomicExpression {
+  Number |
+  String |
+  Atom |
+  ParenthesizedExpression |
+  TupleExpression |
+  ArrayExpression |
+  DictionaryExpression |
+  SetExpression |
+  @specialize[@name=Boolean]<identifier, "True" | "False">
+}
+
+ArgList { "(" commaSep<expression>? ")" }
+
+Atom {
+  CallAtom { Atom ArgList } |
+  MethodAccess { Atom "." PropertyName !trail ArgList } |
+  PropertyAccess { Atom "." PropertyName } |
+  IndexAccess { Atom "[" expression "]" } |
+  AtomStart
+}
+
+AtomStart {
+  Self { kw<"self"> } |
+  CallExpression |
+  ClassMethodCallExpression |
+  VariableName
+}
+
+CallExpression { VariableName !trail ArgList}
+
+ClassMethodCallExpression { TypeIdentifier "::" PropertyName ArgList }
+
+IfStatement {
+  kw<"if"> expression Body
+  (kw<"elif"> expression Body)*
+  elseClause?
+}
+
+elseClause { kw<"else"> Body }
+
+ParenthesizedExpression { "(" expression ")" }
+
+InnerTupleExpression { expression "," commaSep<expression> }
+
+TupleExpression { "(" InnerTupleExpression? ")" }
+
+ArrayExpression { "[" commaSep<expression>? "]" }
+
+DictionaryExpression { "{" commaSep<expression ":" expression>? "}" }
+
+SetExpression { "{" commaSep<expression> "}" }
+
+VariableName { identifier }
+
+PropertyName { identifier }
+
+ArgName { identifier }
+
+kw<term> { @specialize[@name={term}]<identifier, term> }
+
+@skip {} {
+  String {
+    "'" (stringSingleContent | stringSingleNewline)* stringSingleEnd |
+    '"' (stringDoubleContent | stringDoubleNewline)* stringDoubleEnd
+  }
+
+  blankLine {
+    blankLineStart space? LineComment? newline
+  }
+
+  BlockComment { "/*" (blockCommentContent | blockCommentNewline)* blockCommentEnd }
+}
+
+@context trackIndent from "./tokens.js"
+
+@external tokens indentation from "./tokens" { indent, dedent }
+
+@external tokens newlines from "./tokens" { newline, blankLineStart, newlineBracketed, eof }
+
+LineComment { HashComment | SlashComment }
+
+@tokens {
+  ArithPlusOp { "+" | "-" }
+
+  Divide { "/" }
+
+  ArithTimesOp { "*" | Divide }
+
+  CompareOp { ">" | ">=" | "<" | "<=" | "==" | "!=" }
+
+  identifierChar { @asciiLetter | $[_\u{a1}-\u{10ffff}] }
+
+  word { identifierChar (@digit | identifierChar)* }
+
+  identifier { word }
+
+  Number {
+    (@digit ("_" | @digit)* ("." @digit ("_" | @digit)*)? | "." @digit ("_" | @digit)*)
+      ($[eE] $[+\-]? @digit ("_" | @digit)*)? $[jJ]? |
+    "0" $[bB] $[_01]+ |
+    "0" $[oO] $[_0-7]+ |
+    "0" $[xX] $[_0-9a-fA-F]+
+  }
+
+  HashComment { "#" ![\n\r]* }
+
+  SlashComment { "//" ![\n\r]* }
+
+  @precedence { SlashComment, ArithTimesOp }
+
+  space { ($[ \t\f] | "\\" $[\n\r])+ }
+
+  "("[@export=ParenL] ")"
+  "["[@export=BracketL] "]"
+  "{"[@export=BraceL] "}"
+  "." "," ";" ":" "::" "=" "->"
+}
+
+@external propSource jarvilHighlighting from "./highlight"
+
+@detectDelim
