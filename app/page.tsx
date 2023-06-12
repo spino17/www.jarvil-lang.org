@@ -143,9 +143,10 @@ export default function Home() {
                 {"Type Checking"}
               </WhyJarvilContentHeadingDiv>
               <WhyJarvilContentTextDiv>
-                {
-                  "Jarvil comes with a static type-checking system which catch errors at compile time rather than runtime! To achieve this Jarvil provides syntax for type annotations. It can automatically infer types wherever possible."
-                }
+                Jarvil comes with a static type-checking system which catch
+                errors at compile time rather than runtime! To achieve this
+                Jarvil provides syntax for type annotations. It can
+                automatically infer types wherever possible.
               </WhyJarvilContentTextDiv>
             </WhyJarvilContentDiv>
             <WhyJarvilContentDiv>
@@ -153,9 +154,9 @@ export default function Home() {
                 {"Transpiles to Python"}
               </WhyJarvilContentHeadingDiv>
               <WhyJarvilContentTextDiv>
-                {
-                  "Jarvil transpiles to clean formatted Python code which you can trust does not have any type related bugs. This also lets you gradually integrate jarvil in your existing Python projects."
-                }
+                Jarvil transpiles to clean formatted Python code which you can
+                trust does not have any type related bugs. This also lets you
+                gradually integrate jarvil in your existing Python projects.
               </WhyJarvilContentTextDiv>
             </WhyJarvilContentDiv>
             <WhyJarvilContentDiv>
@@ -163,9 +164,10 @@ export default function Home() {
                 {"Modern features"}
               </WhyJarvilContentHeadingDiv>
               <WhyJarvilContentTextDiv>
-                {
-                  "Jarvil adds modern features like lambda support, structural-typing, error-tolerant lossless parsing, distinct namespaces, conditional and loop blocks scoping, beautiful error diagnostics and much more."
-                }
+                Jarvil adds modern features like lambda support,
+                structural-typing, error-tolerant lossless parsing, distinct
+                namespaces, conditional and loop blocks scoping, beautiful error
+                diagnostics and much more.
               </WhyJarvilContentTextDiv>
             </WhyJarvilContentDiv>
           </WhyJarvilContentGlobalDiv>
