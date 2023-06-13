@@ -2,7 +2,6 @@ import { parser } from "./parser";
 import {
   LRLanguage,
   foldNodeProp,
-  indentService,
   LanguageSupport,
   TreeIndentContext,
 } from "@codemirror/language";
@@ -68,30 +67,6 @@ const globalCompletion = ifNotIn(
   dontComplete,
   completeFromList(globals.concat(snippets))
 );
-
-function indentBody(context: TreeIndentContext, node: SyntaxNode) {
-  let base = context.lineIndent(node.from);
-  let line = context.lineAt(context.pos, -1),
-    to = line.from + line.text.length;
-  // Don't consider blank, deindented lines at the end of the
-  // block part of the block
-  if (
-    /^\s*($|#)/.test(line.text) &&
-    context.node.to < to + 100 &&
-    !/\S/.test(context.state.sliceDoc(to, context.node.to)) &&
-    context.lineIndent(context.pos, -1) <= base
-  )
-    return null;
-  // A normally deindenting keyword that appears at a higher
-  // indentation than the block should probably be handled by the next
-  // level
-  if (
-    /^\s*(else:|elif |except |finally:)/.test(context.textAfter) &&
-    context.lineIndent(context.pos, -1) > base
-  )
-    return null;
-  return base + context.unit;
-}
 
 const jarvilLanguage = LRLanguage.define({
   name: "jarvil",

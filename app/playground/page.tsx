@@ -13,6 +13,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { jarvil } from "@/utils/codemirror/core";
 import { oneDark } from "@/utils/theme";
 import { runParser } from "@/utils/codemirror/analysis";
+import { indentService } from "@codemirror/language";
 
 const CodeEditorGlobalWrapper = styled.div`
   text-align: center;
@@ -133,7 +134,10 @@ export default function Playground() {
                 <CodeMirror
                   value={inputText}
                   height="600px"
-                  extensions={[jarvil()]}
+                  extensions={[
+                    jarvil(),
+                    indentService.of((context, pos) => null),
+                  ]}
                   onChange={(code) => setInputText(code)}
                   theme={oneDark}
                   className="CodeMirror"
