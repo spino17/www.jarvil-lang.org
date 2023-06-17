@@ -11,7 +11,7 @@ const consolasFont = localFont({
 
 const DocsPageHeadingDiv = styled.div`
   color: ${(props) => props.theme.defaultFontColor};
-  font-size: 70px;
+  font-size: 65px;
   margin-top: 20px;
   font-weight: 300;
   padding-bottom: 30px;

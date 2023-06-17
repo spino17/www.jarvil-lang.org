@@ -12,13 +12,13 @@ export function useInitProgrammingEnviroment(): InitializerResult {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [pyodide, setPyodide] = useState<any | null>(null);
   useEffect(() => {
-    const inner_func = async () => {
+    const innerFunc = async () => {
       await init(); // load the jarvil-wasm module
       let pyodideObject = await loadPyodide(); // load the python-wasm (Pyodide) module
       setPyodide(pyodideObject);
       setIsInitialized(true);
     };
-    inner_func();
+    innerFunc();
   }, []);
 
   return { isInitialized, pyodide };
@@ -29,12 +29,12 @@ export function useRunJarvilCode(inputText: string, pyodide: any) {
   const [output, setOutput] = useState<JarvilCodeExecutionResult | null>(null);
   useEffect(() => {
     if (isOutputLoading) {
-      const inner_func = async () => {
+      const innerFunc = async () => {
         const result = await runJarvilCode(inputText, pyodide);
         setOutput(result);
         setIsOutputLoading(false);
       };
-      inner_func();
+      innerFunc();
     }
   }, [isOutputLoading]);
 

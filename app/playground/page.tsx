@@ -98,6 +98,11 @@ const CodeOutputAreaGlobalWrapper = styled.div`
   margin-right: 20px;
 `;
 
+const CodeOutputTextStyledDiv = styled.div`
+  white-space: pre-wrap;
+  font-family: "Courier New", Courier, monospace;
+`;
+
 export default function Playground() {
   const [inputText, setInputText] = useState<string>(
     'def main():\n    # start writing your code here\n    print("Hello, World")'
@@ -156,11 +161,10 @@ export default function Playground() {
                   <div>{"Running the code ...\n"}</div>
                 ) : output ? (
                   // TODO - use output.kind to add extra information on the output
-                  <div
+                  <CodeOutputTextStyledDiv
                     dangerouslySetInnerHTML={{
                       __html: output.msg,
                     }}
-                    className="output"
                   />
                 ) : null}
               </CodeOuputAreaWrapper>

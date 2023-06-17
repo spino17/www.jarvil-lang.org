@@ -23,7 +23,7 @@ const NavBarTabStyle = styled.div<{
   padding-bottom: 15px;
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
-  font-weight: 200;
+  font-weight: 300;
   border-bottom: 1px solid #343636;
   color: ${(props) => props.theme.defaultFontColor};
   display: flex;

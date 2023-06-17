@@ -50,7 +50,7 @@ const DescriptionDiv = styled.div`
   padding-top: 50px;
   padding-right: 50px;
   line-height: 40px;
-  font-weight: 200;
+  font-weight: 300;
 `;
 
 const GetStartedButtonDiv = styled.div`
@@ -88,7 +88,7 @@ const WhyJarvilTextDiv = styled.div`
   padding: 30px;
   color: black;
   font-size: 50px;
-  font-weight: 200;
+  font-weight: 300;
 `;
 
 const WhyJarvilContentDiv = styled.div`
