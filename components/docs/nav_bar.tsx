@@ -5,7 +5,6 @@ import {
 } from "../../utils/docs/nav_data";
 import { useContext, useState } from "react";
 import StyledLink from "../link";
-import { ArrowForwardIcon, ArrowUpwardIcon } from "../icons";
 import { LocalThemeContext } from "../theme";
 
 const FlexStyled = styled.div`
@@ -54,15 +53,7 @@ const NavBarGlobalStyle = styled.div`
 `;
 
 function DropDownArrowIcon(props: { isOpen: boolean | null }) {
-  return (
-    <div>
-      {props.isOpen ? (
-        <ArrowUpwardIcon size={20} />
-      ) : (
-        <ArrowForwardIcon size={20} />
-      )}
-    </div>
-  );
+  return null;
 }
 
 function NavBarTab(props: {
